@@ -53,6 +53,7 @@ function handleSend(){
       // last step, show verify option
       append(script[step], 'ai');
       const btn = document.createElement('button');
+      btn.className = 'button';
       btn.textContent = 'Verify Now';
       btn.onclick = () => {
         const url = demo ? 'income.html?demo=1' : 'income.html';
@@ -93,6 +94,7 @@ function checkOffers(){
     const o = offers[offers.length-1];
     append(o.brand + ' launched a new offer made for new parents like you. Includes ' + o.reward + '. Want to check it out?', 'ai');
     const btn = document.createElement('button');
+    btn.className = 'button';
     btn.textContent = 'Yes, please';
     btn.onclick = () => {
       const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
