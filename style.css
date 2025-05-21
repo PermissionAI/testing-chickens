@@ -18,3 +18,28 @@ body {
   width: 200px;
   margin-bottom: 20px;
 }
+#chatLog,
+#brandLog {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai,
+.user {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 75%;
+  line-height: 1.4;
+}
+
+.ai {
+  background: #f1f0f0;
+  align-self: flex-start;
+}
+
+.user {
+  background: #dcf8c6;
+  align-self: flex-end;
+}
+
