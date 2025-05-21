@@ -128,6 +128,24 @@ function autoDemo(){
   setTimeout(sendNext, 500);
 }
 
+function guidedDemo(){
+  const messages = ['No', 'Just getting started', 'Sure'];
+  optInBtn.click();
+  let i = 0;
+  chatInput.value = messages[i];
+  sendBtn.addEventListener('click', () => {
+    i++;
+    if(i < messages.length){
+      setTimeout(() => { chatInput.value = messages[i]; }, 100);
+    } else {
+      setTimeout(() => {
+        const btn = chatLog.querySelector('button');
+        if(btn) btn.click();
+      }, 500);
+    }
+  });
+}
+
 optInBtn.onclick = () => {
   const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
   if(!brands.includes(featuredBrand)){
@@ -148,6 +166,6 @@ window.onload = function(){
     startChat();
   }
   if(demo && scene !== 'final'){
-    setTimeout(autoDemo, 500);
+    setTimeout(guidedDemo, 500);
   }
 };

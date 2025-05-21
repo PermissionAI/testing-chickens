@@ -4,7 +4,9 @@ This repository contains a small demo of a permission-based advertising flow.
 
 ## Running the demo
 
-Open `demo.html` in your browser. It will automatically step through:
+Open `demo.html` in your browser. The conversation text will prefill in the
+input boxes so you can simply press **Send** to advance the scripted flow
+through:
 
 1. The user flow on `index.html`.
 2. The brand portal on `brand.html`.
