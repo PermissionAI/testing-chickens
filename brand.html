@@ -14,6 +14,9 @@
   </div>
 
   <script>
+  const params = new URLSearchParams(window.location.search);
+  const demo = params.get('demo');
+
   const log = document.getElementById('brandLog');
   const input = document.getElementById('brandInput');
   const send = document.getElementById('brandSend');
@@ -45,6 +48,11 @@
           offers.push({brand:'Diaper Brand #2', reward:'800 ASK + $5 off'});
           localStorage.setItem('offers', JSON.stringify(offers));
           append('Campaign live!');
+          if(demo){
+            setTimeout(() => {
+              window.location.href = 'index.html?demo=1&scene=final';
+            }, 1000);
+          }
         };
         log.appendChild(document.createElement('br')); 
         log.appendChild(go);
@@ -58,7 +66,35 @@
     input.value='';
     next();
   };
-  window.onload = next;
+  function autoDemo(){
+    const msgs = ['Parents in Phoenix', 'Yes', 'All set'];
+    let i = 0;
+    function sendNext(){
+      if(i < msgs.length){
+        input.value = msgs[i];
+        send.click();
+        i++;
+        setTimeout(sendNext, 500);
+      } else {
+        setTimeout(() => {
+          const launch = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Launch Campaign');
+          if(launch) launch.click();
+          setTimeout(() => {
+            const go = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Go Live');
+            if(go) go.click();
+          }, 500);
+        }, 500);
+      }
+    }
+    sendNext();
+  }
+
+  window.onload = () => {
+    next();
+    if(demo){
+      setTimeout(autoDemo, 500);
+    }
+  };
   </script>
 </body>
 </html>
