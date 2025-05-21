@@ -17,6 +17,14 @@
   const log = document.getElementById('brandLog');
   const input = document.getElementById('brandInput');
   const send = document.getElementById('brandSend');
+  const brandNames = [
+    'Bambino Diapers',
+    'Happy Tush',
+    'SnugBug',
+    'EcoBaby',
+    'SoftCare'
+  ];
+  const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
   let bstep = 0;
   const script = [
     'Welcome back. Who are you hoping to connect with today?',
@@ -42,7 +50,7 @@
         go.textContent = 'Go Live';
         go.onclick = () => {
           const offers = JSON.parse(localStorage.getItem('offers') || '[]');
-          offers.push({brand:'Diaper Brand #2', reward:'800 ASK + $5 off'});
+          offers.push({brand: brand, reward:'800 ASK + $5 off'});
           localStorage.setItem('offers', JSON.stringify(offers));
           append('Campaign live!');
         };

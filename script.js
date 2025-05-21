@@ -7,10 +7,20 @@ const chatDiv = q('chat');
 const landing = q('landing');
 const dashboard = q('dashboard');
 const optInBtn = q('optInBtn');
+const featuredBrandEl = q('featuredBrand');
+
+const brandNames = [
+  'Bambino Diapers',
+  'Happy Tush',
+  'SnugBug',
+  'EcoBaby',
+  'SoftCare'
+];
+const featuredBrand = brandNames[Math.floor(Math.random()*brandNames.length)];
 
 let step = 0;
 const script = [
-  "Hey, thanks for opting in to Diaper Brand 1! Have you ever bought from them before?",
+  `Hey, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,
   "Omg, congrats 🎉 That's amazing. Totally get it — it's a lot all at once. Anything in particular you're feeling nervous about?",
   "Makes total sense. If it helps — a lot of brands here offer extra support for growing families. You can verify your household income to unlock personalized offers. Want to give it a shot?"
 ];
@@ -91,8 +101,8 @@ function checkOffers(){
 
 optInBtn.onclick = () => {
   const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
-  if(!brands.includes('Diaper Brand #1')){
-    brands.push('Diaper Brand #1');
+  if(!brands.includes(featuredBrand)){
+    brands.push(featuredBrand);
     localStorage.setItem('optedInBrands', JSON.stringify(brands));
   }
   startChat();
@@ -102,6 +112,7 @@ optInBtn.onclick = () => {
 sendBtn.onclick = handleSend;
 
 window.onload = function(){
+  if(featuredBrandEl) featuredBrandEl.textContent = featuredBrand;
   updateDashboard();
   setInterval(checkOffers, 3000);
 };
