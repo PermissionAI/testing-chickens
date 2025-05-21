@@ -97,10 +97,34 @@
     sendNext();
   }
 
+  function guidedDemo(){
+    const msgs = ['Parents in Phoenix', 'Yes', 'All set'];
+    let i = 0;
+    input.value = msgs[i];
+    send.onclick = () => {
+      append(input.value);
+      input.value='';
+      next();
+      i++;
+      if(i < msgs.length){
+        setTimeout(() => { input.value = msgs[i]; }, 100);
+      } else {
+        setTimeout(() => {
+          const launch = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Launch Campaign');
+          if(launch) launch.click();
+          setTimeout(() => {
+            const go = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Go Live');
+            if(go) go.click();
+          }, 500);
+        }, 500);
+      }
+    };
+  }
+
   window.onload = () => {
     next();
     if(demo){
-      setTimeout(autoDemo, 500);
+      setTimeout(guidedDemo, 500);
     }
   };
   </script>
