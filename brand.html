@@ -5,12 +5,12 @@
   <title>Brand Portal</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="container-medium text-align-center">
   <h1>Permission Brand Portal</h1>
-  <div id="brandChat">
+  <div id="brandChat" class="container-medium">
     <div id="brandLog"></div>
     <input type="text" id="brandInput" placeholder="Type here...">
-    <button id="brandSend">Send</button>
+    <button id="brandSend" class="button">Send</button>
   </div>
 
   <script>
@@ -45,11 +45,13 @@
       append(script[bstep]);
       bstep++;
     } else if(bstep === script.length){
-      const btn = document.createElement('button');
-      btn.textContent = 'Launch Campaign';
+        const btn = document.createElement('button');
+        btn.className = 'button';
+        btn.textContent = 'Launch Campaign';
       btn.onclick = () => {
         append('Want to reach families already on Permission too? You can offer them a reward to join you.');
         const go = document.createElement('button');
+        go.className = 'button';
         go.textContent = 'Go Live';
         go.onclick = () => {
           const offers = JSON.parse(localStorage.getItem('offers') || '[]');
