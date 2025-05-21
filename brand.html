@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Brand Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Permission Brand Portal</h1>
+  <div id="brandChat">
+    <div id="brandLog"></div>
+    <input type="text" id="brandInput" placeholder="Type here...">
+    <button id="brandSend">Send</button>
+  </div>
+
+  <script>
+  const log = document.getElementById('brandLog');
+  const input = document.getElementById('brandInput');
+  const send = document.getElementById('brandSend');
+  let bstep = 0;
+  const script = [
+    'Welcome back. Who are you hoping to connect with today?',
+    "Got it. Let's build your audience. We'll use Google targeting + Permission signals. Want to include your CRM list?",
+    'Great. Add your creative and preview the ad. When ready click Launch Campaign.'
+  ];
+  function append(m){
+    const p = document.createElement('p');
+    p.textContent = m;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  }
+  function next(){
+    if(bstep < script.length){
+      append(script[bstep]);
+      bstep++;
+    } else if(bstep === script.length){
+      const btn = document.createElement('button');
+      btn.textContent = 'Launch Campaign';
+      btn.onclick = () => {
+        append('Want to reach families already on Permission too? You can offer them a reward to join you.');
+        const go = document.createElement('button');
+        go.textContent = 'Go Live';
+        go.onclick = () => {
+          const offers = JSON.parse(localStorage.getItem('offers') || '[]');
+          offers.push({brand:'Diaper Brand #2', reward:'800 ASK + $5 off'});
+          localStorage.setItem('offers', JSON.stringify(offers));
+          append('Campaign live!');
+        };
+        log.appendChild(document.createElement('br')); 
+        log.appendChild(go);
+      };
+      log.appendChild(btn);
+      bstep++;
+    }
+  }
+  send.onclick = () => {
+    append(input.value);
+    input.value='';
+    next();
+  };
+  window.onload = next;
+  </script>
+</body>
+</html>
