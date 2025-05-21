@@ -1,20 +1,69 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
+  font-family: 'Roboto', Arial, sans-serif;
+  background: linear-gradient(135deg, #2e126c, #5d3fd3);
+  color: #ffffff;
+  margin: 0;
+  padding: 20px;
 }
+
 .hidden {
   display: none;
 }
+
 #chatLog {
-  border: 1px solid #ccc;
+  border: 1px solid #5d3fd3;
+  background: #1f1133;
   padding: 10px;
   height: 200px;
   overflow-y: auto;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
 }
+
+#brandLog {
+  display: flex;
+  flex-direction: column;
+}
+
 .tile {
-  border: 1px solid #ccc;
-  padding: 10px;
+  background: #1f1133;
+  border: 1px solid #5d3fd3;
+  border-radius: 8px;
+  padding: 20px;
   width: 200px;
   margin-bottom: 20px;
+}
+
+.ai,
+.user {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 75%;
+  line-height: 1.4;
+  color: #000;
+}
+
+.ai {
+  background: #f1f0f0;
+  align-self: flex-start;
+}
+
+.user {
+  background: #dcf8c6;
+  align-self: flex-end;
+}
+
+button {
+  background: #5d3fd3;
+  color: #ffffff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #7b61ff;
 }
