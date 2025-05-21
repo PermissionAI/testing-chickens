@@ -1,4 +1,8 @@
-function q(id){return document.getElementById(id);} 
+function q(id){return document.getElementById(id);}
+
+const params = new URLSearchParams(window.location.search);
+const demo = params.get('demo');
+const scene = params.get('scene');
 
 const chatLog = q('chatLog');
 const chatInput = q('chatInput');
@@ -40,7 +44,10 @@ function handleSend(){
       append(script[step], 'ai');
       const btn = document.createElement('button');
       btn.textContent = 'Verify Now';
-      btn.onclick = () => location.href = 'income.html';
+      btn.onclick = () => {
+        const url = demo ? 'income.html?demo=1' : 'income.html';
+        location.href = url;
+      };
       chatLog.appendChild(btn);
     } else {
       append(script[++step], 'ai');
@@ -89,6 +96,26 @@ function checkOffers(){
   }
 }
 
+function autoDemo(){
+  const messages = ['No', 'Just getting started', 'Sure'];
+  optInBtn.click();
+  let i = 0;
+  function sendNext(){
+    if(i < messages.length){
+      chatInput.value = messages[i];
+      handleSend();
+      i++;
+      setTimeout(sendNext, 500);
+    } else {
+      setTimeout(() => {
+        const btn = chatLog.querySelector('button');
+        if(btn) btn.click();
+      }, 500);
+    }
+  }
+  setTimeout(sendNext, 500);
+}
+
 optInBtn.onclick = () => {
   const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
   if(!brands.includes('Diaper Brand #1')){
@@ -104,4 +131,10 @@ sendBtn.onclick = handleSend;
 window.onload = function(){
   updateDashboard();
   setInterval(checkOffers, 3000);
+  if(scene === 'final' && demo){
+    startChat();
+  }
+  if(demo && scene !== 'final'){
+    setTimeout(autoDemo, 500);
+  }
 };
