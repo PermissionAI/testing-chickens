@@ -293,12 +293,51 @@ input[type="file"]:focus-visible {
   gap: 10px;
 }
 
-.dashboard {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
   margin-bottom: 20px;
 }
+.dashboard-table th,
+.dashboard-table td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: left;
+}
+.dashboard-table th {
+  background: #f8f8f8;
+}
+
+.dashboard-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.detail-panel {
+  position: fixed;
+  right: 10px;
+  top: 50px;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 6px;
+  margin-right: 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #eef;
+}
+.tag.email { background:#e0f7fa; }
+.tag.sms { background:#fce4ec; }
+.tag.wallet { background:#e8f5e9; }
 
 .stat {
   border: 1px solid #ccc;
@@ -436,14 +475,45 @@ input[type="file"]:focus-visible {
   <button id="offerOpenChat" class="button chat-open hidden">Chat</button>
 </div>
 <div id="finalSection" class="hidden container-medium">
-  <h2>Marketer Dashboard</h2>
-  <p>The following data profile has been delivered:</p>
-  <ul id="dataProfile" class="dashboard">
-    <li>Verified new parents</li>
-    <li>Household income 100k+</li>
-    <li id="recentActivity">Reward accepted: 2500 ASK + $5 coupon</li>
-  </ul>
-  <p id="emailStatus">Personalized email campaign has been triggered for these new parents.</p>
+  <h2>Automation Dashboard</h2>
+  <div id="filterBar" class="dashboard-filters">
+    <select id="channelFilter">
+      <option value="">All Channels</option>
+      <option value="email">Email</option>
+      <option value="sms">SMS</option>
+      <option value="wallet">In-wallet</option>
+    </select>
+    <select id="statusFilter">
+      <option value="">All Statuses</option>
+      <option value="active">Active</option>
+      <option value="paused">Paused</option>
+      <option value="completed">Completed</option>
+    </select>
+    <select id="rangeFilter">
+      <option value="7">Last 7 days</option>
+      <option value="30" selected>Last 30 days</option>
+      <option value="90">Last 90 days</option>
+    </select>
+  </div>
+  <table id="userTable" class="dashboard-table">
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Country</th>
+        <th>Source</th>
+        <th>Join Date</th>
+        <th>Automations</th>
+        <th>Last Trigger</th>
+        <th>Channels</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="detailPanel" class="hidden detail-panel">
+    <h3>User Timeline</h3>
+    <ul id="timeline"></ul>
+    <button id="closeDetail" class="button">Close</button>
+  </div>
   <button id="dashboardNextBtn" class="button scene-next">Next</button>
 </div>
 <div id="brandingSection" class="hidden container-medium">
@@ -467,6 +537,64 @@ let sceneIndex=0;
 let userActionBtn=null;
 let brandActionBtn=null;
 const dashNextBtn=q('dashboardNextBtn');
+
+// ----- Automation Dashboard Data -----
+const automationUsers=[
+  {
+    id:'U1001',country:'US',source:'Website',join:'2024-04-01',
+    automations:[
+      {channel:'email',status:'active',time:'2024-05-23 12:00'},
+      {channel:'sms',status:'active',time:'2024-05-22 09:00'}
+    ]
+  },
+  {
+    id:'U1002',country:'CA',source:'Referral',join:'2024-03-15',
+    automations:[
+      {channel:'wallet',status:'paused',time:'2024-05-18 14:30'}
+    ]
+  },
+  {
+    id:'U1003',country:'GB',source:'Ad',join:'2024-02-20',
+    automations:[
+      {channel:'email',status:'completed',time:'2024-05-10 08:00'}
+    ]
+  }
+];
+
+function lastTrigger(autos){
+  return autos.reduce((a,b)=>a>b.time?a:b.time,'');
+}
+
+function renderUsers(){
+  const tbody=q('userTable').querySelector('tbody');
+  tbody.innerHTML='';
+  const chan=q('channelFilter').value;
+  const status=q('statusFilter').value;
+  automationUsers.forEach((u,idx)=>{
+    const hasChan=!chan||u.automations.some(a=>a.channel===chan);
+    const hasStatus=!status||u.automations.some(a=>a.status===status);
+    if(!hasChan||!hasStatus) return;
+    const last=lastTrigger(u.automations);
+    const active=u.automations.filter(a=>a.status==='active').length;
+    const channels=[...new Set(u.automations.map(a=>a.channel))];
+    const tr=document.createElement('tr');
+    tr.dataset.index=idx;
+    tr.innerHTML=`<td>${u.id}</td><td>${u.country}</td><td>${u.source}</td><td>${u.join}</td><td>${active}</td><td>${last}</td><td>${channels.map(c=>'<span class="tag '+c+'">'+c+'</span>').join(' ')}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function showDetail(user){
+  const panel=q('detailPanel');
+  const list=q('timeline');
+  list.innerHTML='';
+  user.automations.forEach(a=>{
+    const li=document.createElement('li');
+    li.textContent=`${a.time}: ${a.channel} - ${a.status}`;
+    list.appendChild(li);
+  });
+  panel.classList.remove('hidden');
+}
 
 function hideNext(){ q('nextBtn').classList.add('hidden'); }
 function showNext(){ q('nextBtn').classList.remove('hidden'); }
@@ -502,6 +630,7 @@ function showScene(i){
     if(el) el.classList.toggle('hidden',idx!==i);
   });
   sceneIndex=i;
+  if(q('detailPanel')) q('detailPanel').classList.add('hidden');
   q('sceneTitle').textContent=scenes[i].title;
   if(i===1) showNext(); else hideNext();
   if(i===2){
@@ -515,6 +644,7 @@ function showScene(i){
   }
   if(i===4){
     updateWrapUp();
+    renderUsers();
   }
   if(i===4||i===5){
     document.body.classList.add('scene-final');
@@ -618,7 +748,7 @@ const brandConv = [
   { ai: 'Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?',
     user: null },
   { ai: 'Want to reach families already on Permission too? You can offer them a reward to join you.',
-    user: 'Yes \u2014 let\u2019s offer 2500 ASK + $5 off.' }
+    user: 'Yes \u2014 let\u2019s offer 800 ASK + $5 off.' }
 ];
 
 function appendBrand(msg, cls){
@@ -838,6 +968,18 @@ if(q('offerOpenChat')){
   };
 }
 
+// ----- Automation Dashboard Events -----
+if(q('closeDetail')) q('closeDetail').onclick=()=>q('detailPanel').classList.add('hidden');
+if(q('userTable')){
+  q('userTable').onclick=e=>{
+    const row=e.target.closest('tr');
+    if(row) showDetail(automationUsers[row.dataset.index]);
+  };
+}
+['channelFilter','statusFilter','rangeFilter'].forEach(id=>{
+  if(q(id)) q(id).onchange=renderUsers;
+});
+
 if(dashNextBtn){
   dashNextBtn.onclick=()=>showScene(5);
 }
@@ -854,6 +996,7 @@ window.onload=()=>{
   if(!localStorage.getItem('optedInBrands')){
     localStorage.setItem('optedInBrands', JSON.stringify(['EcoBaby','Happy Tush']));
   }
+  renderUsers();
   showScene(0);
 };
 </script>
