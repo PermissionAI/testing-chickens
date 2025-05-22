@@ -5,7 +5,6 @@ const demo = params.get('demo');
 const scene = params.get('scene');
 
 const chatLog = q('chatLog');
-const nextBtn = q('nextBtn');
 const chatDiv = q('chat');
 const landing = q('landing');
 const dashboard = q('dashboard');
@@ -13,14 +12,7 @@ const optInBtn = q('optInBtn');
 const featuredBrandEl = q('featuredBrand');
 const nextBtn = q('nextBtn');
 
-const brandNames = [
-  'Bambino Diapers',
-  'Happy Tush',
-  'SnugBug',
-  'EcoBaby',
-  'SoftCare'
-];
-const featuredBrand = brandNames[Math.floor(Math.random()*brandNames.length)];
+const featuredBrand = 'Diaper Brand #1';
 
 let pair = 0;
 const conversation = [

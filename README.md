@@ -1,6 +1,8 @@
-# testing-chickens
+# Project Hell Yeah
 
-This repository contains a small demo of a permission-based advertising flow.
+This repository contains **Project Hell Yeah**, a front‑end only demo that
+walks through a consent-driven advertising flow. It showcases how zero party
+data and trusted AI can be presented in an interactive format.
 
 ## Running the demo
 
