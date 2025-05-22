@@ -161,6 +161,10 @@ input[type="file"]:focus-visible {
   justify-content: center;
   align-items: center;
 }
+.modal-overlay.hidden {
+  display: none;
+}
+
 
 .modal-content {
   background: #FFFFFF;
