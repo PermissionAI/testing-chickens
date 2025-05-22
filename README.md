@@ -1,28 +1,21 @@
-# Project Hell Yeah
+# Project Hell Yeah Demo v2
 
-This repository contains **Project Hell Yeah**, a front‑end only demo that
-walks through a consent-driven advertising flow. It showcases how zero party
-data and trusted AI can be presented in an interactive format.
+This repository contains **Project Hell Yeah**, a front‑end demo that walks through a consent-driven advertising flow. The second version packages every scene into a single HTML file so you can explore the experience without navigating between pages.
 
 ## Running the demo
 
-Open `demo.html` in your browser. The conversation will prefill and you can
-press **Next** to advance the scripted flow through:
+Open `demo-v2.html` in your browser and use **Next** to progress through:
 
-1. The user flow on `index.html` with an in-page chat overlay and a simulated
-   income verification modal.
-2. The brand portal on `brand.html`.
-3. Returning to the user view to display the final offer.
+1. The user experience with an in-page chat overlay and a simulated income verification modal.
+2. The brand portal where creative is generated.
+3. The final offer view.
 
-The demo uses `localStorage` and `sessionStorage`, so running everything in the
-same browser tab will let the pages share data.
+State is stored in `localStorage` and `sessionStorage`, allowing everything to run in the same tab.
 
-## Presenter Shell
+## Other versions
 
-For a simple click-through presentation of the demo scenes, open `shell.html`. The shell loads each stage of the demo inside an embedded frame so you can step through the entire experience without leaving the page. Use the **Next** button to advance from the Intro through each scene until the end.
+`demo.html` starts the original multi-page flow (`index.html` and `brand.html`). If you want a click-through presentation, open `shell.html` to step through each scene inside a single page.
 
-## Single-file Demo
+## Tests
 
-If you'd rather run the entire experience from a single page, open `demo-v2.html`.
-This consolidated version contains all scenes and scripts inline so you can step
-through the flow without navigating between pages.
+Run `npm test` to execute the automated unit tests.
