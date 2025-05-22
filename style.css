@@ -11,6 +11,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.scene-final {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  aspect-ratio: 16 / 9;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
 *[tabindex]:focus-visible,
 input[type="file"]:focus-visible {
   outline: 0.125rem solid #115E59;

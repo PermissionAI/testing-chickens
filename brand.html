@@ -192,12 +192,14 @@
 
   function showOfferSummary(txt){
     summary.innerHTML = '<p>' + txt + '</p>';
+    const rewardMatch = /(\d+\s*ASK\s*\+\s*\$\d+\s*off)/i.exec(txt);
+    const reward = rewardMatch ? rewardMatch[1] : txt;
     const go = document.createElement('button');
     go.className = 'button';
     go.textContent = 'Go Live';
     go.onclick = () => {
       const offers = JSON.parse(localStorage.getItem('offers') || '[]');
-      offers.push({brand: brand, reward: txt});
+      offers.push({brand: brand, reward: reward});
       localStorage.setItem('offers', JSON.stringify(offers));
       summary.innerHTML = '<p>Campaign live!</p>';
       const nextBtn = document.createElement('button');
