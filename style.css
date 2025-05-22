@@ -199,3 +199,25 @@ input[type="file"]:focus-visible {
 
 .step { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
 
+/* Wrap-up scene styles */
+#wrapUpScene {
+  margin-top: 20px;
+}
+
+.brand-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.overlay-text {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+#branding {
+  margin-top: 20px;
+}
+
