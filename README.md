@@ -4,11 +4,11 @@ This repository contains a small demo of a permission-based advertising flow.
 
 ## Running the demo
 
-Open `demo.html` in your browser. The conversation text will prefill in the
-input boxes so you can simply press **Send** to advance the scripted flow
-through:
+Open `demo.html` in your browser. The conversation will prefill and you can
+press **Next** to advance the scripted flow through:
 
-1. The user flow on `index.html`.
+1. The user flow on `index.html` with an in-page chat overlay and a simulated
+   income verification modal.
 2. The brand portal on `brand.html`.
 3. Returning to the user view to display the final offer.
 
