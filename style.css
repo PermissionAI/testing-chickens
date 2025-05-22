@@ -35,16 +35,39 @@ input[type="file"]:focus-visible {
   overflow-y: auto;
   margin-bottom: 10px;
 }
-#chat {
+#chat,
+#brandChat,
+.floating-chat {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 300px;
+  width: 320px;
   max-width: 90%;
   background: #fff;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   border-radius: 8px;
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #00A9E0;
+  color: #fff;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
 }
 .tile {
   border: 1px solid #ccc;
@@ -93,6 +116,17 @@ input[type="file"]:focus-visible {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
+.chat-open {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.preview-ad {
+  margin: 0 auto;
+}
+
 .border-radius-md {
   border-radius: 12px;
 }
@@ -123,6 +157,9 @@ input[type="file"]:focus-visible {
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
@@ -145,17 +182,11 @@ input[type="file"]:focus-visible {
   color: #00A9E0;
 }
 
-.chat-overlay {
+.chat-box {
   background: rgba(255, 255, 255, 0.95);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 300px;
 }
 
 .callout {
@@ -198,6 +229,18 @@ input[type="file"]:focus-visible {
 
 
 .step { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
+
+.placeholder-img {
+  width: 100%;
+  height: 150px;
+  background: #eee;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 14px;
+}
 
 /* Wrap-up scene styles */
 #wrapUpScene {
