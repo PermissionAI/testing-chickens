@@ -408,6 +408,27 @@ input[type="file"]:focus-visible {
   margin: 10px 0;
 }
 
+#audienceInput {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.budget-label {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-weight: bold;
+}
+
+#dataList {
+  list-style: none;
+  padding-left: 0;
+}
+
+#dataList li {
+  margin: 4px 0;
+}
+
 #branding {
   margin-top: 20px;
 }
@@ -484,15 +505,16 @@ input[type="file"]:focus-visible {
     <button id="brandNextBtn" class="button">Next</button>
   </div>
   <button id="brandOpenChat" class="button chat-open hidden">Chat</button>
-  <div id="wizardModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <div id="wizard" class="container-medium">
-        <div id="step1" class="step">
-          <h3>Audience & Offer</h3>
-          <label for="audienceInput">Audience description</label>
-          <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
-          <button id="step1Next" class="button modal-cta">Next</button>
-        </div>
+    <div id="wizardModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <div id="askBudget" class="budget-label">Budget: <span id="budgetAmount">5000 ASK</span></div>
+        <div id="wizard" class="container-medium">
+          <div id="step1" class="step">
+            <h3>Audience & Offer</h3>
+            <label for="audienceInput">Audience description</label>
+            <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
+            <button id="step1Next" class="button modal-cta">Next</button>
+          </div>
         <div id="step2" class="step hidden">
           <h3>Creative Setup</h3>
           <img id="creativeImg" class="placeholder-img" src="https://placehold.co/300x150?text=Ad+Preview" alt="Ad creative preview">
@@ -554,11 +576,13 @@ input[type="file"]:focus-visible {
     </select>
   </div>
   <div id="userGrid" class="user-grid"></div>
-  <div id="detailPanel" class="hidden detail-panel">
-    <h3>User Timeline</h3>
-    <ul id="timeline"></ul>
-    <button id="closeDetail" class="button">Close</button>
-  </div>
+    <div id="detailPanel" class="hidden detail-panel">
+      <h3>User Timeline</h3>
+      <ul id="timeline"></ul>
+      <h3>Available Data</h3>
+      <ul id="dataList"></ul>
+      <button id="closeDetail" class="button">Close</button>
+    </div>
   <button id="dashboardNextBtn" class="button scene-next">Next</button>
 </div>
 <div id="brandingSection" class="hidden container-medium">
@@ -674,11 +698,23 @@ function renderUsers(){
 function showDetail(user){
   const panel=q('detailPanel');
   const list=q('timeline');
+  const dataList=q('dataList');
   list.innerHTML='';
+  dataList.innerHTML='';
   user.automations.forEach(a=>{
     const li=document.createElement('li');
     li.textContent=`${a.time}: ${a.channel} - ${a.status}`;
     list.appendChild(li);
+  });
+  const available=[
+    {name:'Social Data',ask:50},
+    {name:'Behavioral Data',ask:75},
+    {name:'Protected PII',ask:200}
+  ];
+  available.forEach(d=>{
+    const li=document.createElement('li');
+    li.textContent=`${d.name} - ${d.ask} ASK`;
+    dataList.appendChild(li);
   });
   panel.classList.remove('hidden');
 }
