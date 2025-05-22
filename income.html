@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Project Hell Yeah - Income Verification</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
   <link rel="stylesheet" href="https://cdn.prod.website-files.com/67c771c6f7894b7707a8c19d/css/permission-io.shared.c64c7fab2.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="container-medium text-align-center">
   <h1>Income Verification</h1>
   <p>This is a placeholder for a secure third-party verification flow.</p>
-  <button onclick="finish()" class="button">Complete Verification</button>
+  <button id="completeBtn" class="button">Complete Verification</button>
 
   <script>
   const params = new URLSearchParams(window.location.search);
@@ -23,6 +24,8 @@
       window.location.href = 'index.html';
     }
   }
+
+  document.getElementById('completeBtn').addEventListener('click', finish);
 
   window.onload = function(){
     if(demo){

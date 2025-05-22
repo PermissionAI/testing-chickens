@@ -1,5 +1,9 @@
+:root {
+  --color-primary: #1A73E8;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', Arial, sans-serif;
   margin: 20px auto;
   max-width: 960px;
   -webkit-font-smoothing: antialiased;
@@ -8,7 +12,7 @@ body {
 
 *[tabindex]:focus-visible,
 input[type="file"]:focus-visible {
-  outline: 0.125rem solid #006633;
+  outline: 0.125rem solid #1558B0;
   outline-offset: 0.125rem;
 }
 
@@ -56,7 +60,7 @@ input[type="file"]:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #008000;
+  background: var(--color-primary);
   color: #fff;
   padding: 6px 10px;
   cursor: pointer;
@@ -88,7 +92,7 @@ input[type="file"]:focus-visible {
 }
 
 .button {
-  background: #008000;
+  background: var(--color-primary);
   color: #FFFFFF;
   border-radius: 8px;
   padding: 16px 32px;
@@ -102,7 +106,7 @@ input[type="file"]:focus-visible {
 }
 
 .button:hover {
-  background: #006633;
+  background: #1558B0;
 }
 
 .text-align-center {
@@ -194,7 +198,7 @@ input[type="file"]:focus-visible {
 }
 
 .footer-link:hover {
-  color: #008000;
+  color: var(--color-primary);
 }
 
 .chat-box {
@@ -206,7 +210,7 @@ input[type="file"]:focus-visible {
 
 .callout {
   font-size: 14px;
-  color: #008000;
+  color: var(--color-primary);
   margin-bottom: 8px;
   font-weight: bold;
 }
@@ -247,14 +251,10 @@ input[type="file"]:focus-visible {
 
 .placeholder-img {
   width: 100%;
-  height: 150px;
-  background: #eee;
+  height: auto;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  font-size: 14px;
+  display: block;
+  border-radius: 8px;
 }
 
 /* Wrap-up scene styles */
