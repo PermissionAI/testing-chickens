@@ -5,18 +5,9 @@ const scenes = [
     'Welcome to the demo presentation.',
     'Use the Next button to progress through each scene.'
   ]},
-  {name: 'Scene 1', lines: [
-    'This is the first scene of the demo.',
-    'Here you might introduce the main character.'
-  ]},
-  {name: 'Scene 2', lines: [
-    'Now we are in scene two.',
-    'Add more narrative or action here.'
-  ]},
-  {name: 'Scene 3', lines: [
-    'Scene three continues the story.',
-    'Keep the pacing steady for your audience.'
-  ]},
+  {name: 'Scene 1 - User Onboarding', page: 'index.html?demo=1'},
+  {name: 'Scene 2 - Brand Portal', page: 'brand.html?demo=1'},
+  {name: 'Scene 3 - Offer Delivered', page: 'index.html?scene=final&demo=1'},
   // The final scene displays a custom UI rather than scripted lines
   {name: 'Scene 4 - Wrap-Up', lines: []}
 ];
@@ -27,6 +18,7 @@ let lineIndex = 0;
 const sceneName = q('sceneName');
 const sceneLog = q('sceneLog');
 const nextBtn = q('nextBtn');
+const frame = q('demoFrame');
 const wrapScene = q('wrapUpScene');
 const wrapBrands = q('wrapBrands');
 const totalAskEl = q('totalAsk');
@@ -66,18 +58,28 @@ function updateWrapUp(){
 }
 
 function showScene(){
-  sceneName.textContent = scenes[sceneIndex].name;
+  const scene = scenes[sceneIndex];
+  sceneName.textContent = scene.name;
   lineIndex = 0;
   if(sceneIndex === scenes.length - 1){
     // Final wrap-up scene
+    frame.classList.add('hidden');
     sceneLog.classList.add('hidden');
     wrapScene.classList.remove('hidden');
     nextBtn.textContent = 'Replay Demo';
     nextBtn.onclick = () => window.location.reload();
     updateWrapUp();
-  } else {
-    sceneLog.classList.remove('hidden');
+  } else if(scene.page){
+    frame.src = scene.page;
+    frame.classList.remove('hidden');
+    sceneLog.classList.add('hidden');
     wrapScene.classList.add('hidden');
+    nextBtn.textContent = 'Next';
+    nextBtn.onclick = next;
+  } else {
+    frame.classList.add('hidden');
+    wrapScene.classList.add('hidden');
+    sceneLog.classList.remove('hidden');
     sceneLog.innerHTML = '';
     nextBtn.textContent = 'Next';
     nextBtn.onclick = next;
@@ -90,7 +92,12 @@ function next(){
     // Final scene handled by showScene()
     return;
   }
-  if(lineIndex < scene.lines.length){
+  if(scene.page){
+    sceneIndex++;
+    if(sceneIndex < scenes.length){
+      showScene();
+    }
+  } else if(lineIndex < scene.lines.length){
     append(scene.lines[lineIndex]);
     lineIndex++;
   } else {
