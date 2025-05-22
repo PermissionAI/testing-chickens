@@ -656,17 +656,14 @@ function renderUsers(){
     const hasStatus=!status||u.automations.some(a=>a.status===status);
     if(!hasChan||!hasStatus) return;
     count++;
-    const last=lastTrigger(u.automations);
-    const statuses=[...new Set(u.automations.map(a=>a.status))];
-    const channels=[...new Set(u.automations.map(a=>a.channel))];
+    const active=u.automations.filter(a=>a.status==='active').map(a=>a.channel);
+    const activeTags=active.map(c=>`<span class="tag ${c}">${icon(c)} ${c}</span>`).join(' ');
     const card=document.createElement('div');
     card.className='user-card';
     card.dataset.index=idx;
-    const chanTags=channels.map(c=>`<span class="tag ${c}">${icon(c)} ${c}</span>`).join(' ');
-    card.innerHTML=`<div><strong>${u.id}</strong> - ${u.country}</div>
-    <div class="meta source">${u.source}</div>
-    <div class="channel-tags">${chanTags}</div>
-    <div class="meta"><span>${last}</span> <span class="status">${statuses.join(', ')}</span></div>`;
+    card.innerHTML=`<div><strong>${u.id}</strong></div>
+    <div class="meta">Score: <span class="score-high">${u.score}</span></div>
+    <div class="channel-tags">${activeTags||'<em>No active automations</em>'}</div>`;
     grid.appendChild(card);
   });
   if(count===0){
