@@ -14,7 +14,7 @@ State is stored in `localStorage` and `sessionStorage`, allowing everything to r
 
 ## Other versions
 
-`demo.html` starts the original multi-page flow (`index.html` and `brand.html`). If you want a click-through presentation, open `shell.html` to step through each scene inside a single page.
+Earlier versions of the demo are preserved in the `archive/` directory. `demo.html` starts the original multi-page flow (`index.html` and `brand.html`). If you want a click-through presentation, open `shell.html` to step through each scene inside a single page.
 
 ## Tests
 
