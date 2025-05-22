@@ -409,6 +409,41 @@ const scenes=[
   {id:'finalSection',title:'Scene 3 - Wrap Up'}
 ];
 let sceneIndex=0;
+let userActionBtn=null;
+let brandActionBtn=null;
+
+function hideNext(){ q('nextBtn').classList.add('hidden'); }
+function showNext(){ q('nextBtn').classList.remove('hidden'); }
+function hideBrandNext(){ q('brandNextBtn').classList.add('hidden'); }
+function showBrandNext(){ q('brandNextBtn').classList.remove('hidden'); }
+
+function parseAsk(str){
+  const m=/(\d+)\s*ASK/i.exec(str||'');
+  return m?parseInt(m[1],10):0;
+}
+
+function updateWrapUp(){
+  const brands=JSON.parse(localStorage.getItem('optedInBrands')||'[]');
+  q('wrapBrands').innerHTML='';
+  brands.forEach(b=>{const div=document.createElement('div');div.className='tile card';div.textContent=b;q('wrapBrands').appendChild(div);});
+  const offers=JSON.parse(localStorage.getItem('offers')||'[]');
+  let total=0;offers.forEach(o=>{total+=parseAsk(o.reward);});
+  q('totalAsk').textContent=total;
+  if(offers.length){
+    const last=offers[offers.length-1];
+    q('recentActivity').textContent=last.brand+': '+last.reward;
+  }else{
+    q('recentActivity').textContent='No recent activity';
+  }
+}
+
+function showWrapUp(){
+  if(q('chat')) q('chat').classList.add('hidden');
+  if(q('brandChat')) q('brandChat').classList.add('hidden');
+  if(q('brandOpenChat')) q('brandOpenChat').classList.add('hidden');
+  updateWrapUp();
+  showScene(3);
+}
 
 function showScene(i){
   scenes.forEach((s,idx)=>{
@@ -417,6 +452,14 @@ function showScene(i){
   });
   sceneIndex=i;
   q('sceneTitle').textContent=scenes[i].title;
+  if(i===1) showNext(); else hideNext();
+  if(i===2){
+    showBrandNext();
+    if(bPair===0) { appendBrand(brandConv[0].ai,'ai'); bExpect='user'; }
+  } else {
+    hideBrandNext();
+  }
+  if(i===3) updateWrapUp();
 }
 
 q('mainNext').onclick=()=>{
@@ -445,15 +488,21 @@ function appendChat(msg,cls){
 }
 
 function showVerify(){
+  hideNext();
+  if(userActionBtn) userActionBtn.remove();
   const btn=document.createElement('button');
   btn.className='button';
   btn.textContent='Verify Now';
   btn.onclick=()=>{q('incomeModal').classList.remove('hidden');};
   q('chatLog').appendChild(btn);
+  userActionBtn=btn;
 }
 
 function userNext(){
-  if(uPair>=userConv.length) return;
+  if(uPair>=userConv.length){
+    hideNext();
+    return;
+  }
   const curr=userConv[uPair];
   if(expecting==='user'){
     if(curr.user){
@@ -473,6 +522,12 @@ q('optInBtn').onclick=()=>{
   q('landing').classList.add('hidden');
   q('chat').classList.remove('hidden');
   q('featuredBrand').textContent=featuredBrand;
+  const brands=JSON.parse(localStorage.getItem('optedInBrands')||'[]');
+  if(!brands.includes(featuredBrand)){
+    brands.push(featuredBrand);
+    localStorage.setItem('optedInBrands',JSON.stringify(brands));
+  }
+  showNext();
   userNext();
 };
 
@@ -480,6 +535,8 @@ q('nextBtn').onclick=userNext;
 q('verifyCompleteBtn').onclick=()=>{
   q('incomeModal').classList.add('hidden');
   appendChat('Income verified!','ai');
+  if(userActionBtn){userActionBtn.remove();userActionBtn=null;}
+  hideNext();
   q('sceneNextBtn').classList.remove('hidden');
 };
 q('sceneNextBtn').onclick=()=>showScene(2);
@@ -514,26 +571,34 @@ function showWizard(){
 }
 
 function showWizardButton(){
+  hideBrandNext();
+  if(brandActionBtn) brandActionBtn.remove();
   const btn = document.createElement('button');
   btn.className = 'button';
   btn.textContent = 'Open Builder';
   btn.onclick = () => {
     btn.remove();
+    brandActionBtn = null;
     showWizard();
     bPair++;
     bExpect = 'ai';
   };
+  brandActionBtn = btn;
   q('brandLog').appendChild(btn);
 }
 
 function handleBrandNext(){
-  if(bPair >= brandConv.length) return;
+  if(bPair >= brandConv.length){
+    hideBrandNext();
+    return;
+  }
   const curr = brandConv[bPair];
   if(bExpect === 'user'){
     if(curr.user){
       appendBrand(curr.user, 'user');
       bPair++;
       if(bPair === brandConv.length){
+        hideBrandNext();
         showOfferSummary(curr.user);
       }
       bExpect = 'ai';
@@ -573,6 +638,7 @@ q('step2Next').onclick = () => {
 q('launchBtn').onclick = () => {
   q('step3').classList.add('hidden');
   q('wizard').classList.add('hidden');
+  hideBrandNext();
   handleBrandNext();
 };
 
