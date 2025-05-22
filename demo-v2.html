@@ -298,6 +298,7 @@ input[type="file"]:focus-visible {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+  font-size: 14px;
 }
 .dashboard-table th,
 .dashboard-table td {
@@ -306,8 +307,13 @@ input[type="file"]:focus-visible {
   text-align: left;
 }
 .dashboard-table th {
-  background: #f8f8f8;
+  background: var(--color-primary);
+  color: #fff;
 }
+.dashboard-table tr:nth-child(even) {
+  background: #fafafa;
+}
+.score-high { color: #15803d; font-weight: bold; }
 
 .dashboard-filters {
   display: flex;
@@ -505,6 +511,7 @@ input[type="file"]:focus-visible {
         <th>Automations</th>
         <th>Last Trigger</th>
         <th>Channels</th>
+        <th>Match Score</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -541,22 +548,40 @@ const dashNextBtn=q('dashboardNextBtn');
 // ----- Automation Dashboard Data -----
 const automationUsers=[
   {
-    id:'U1001',country:'US',source:'Website',join:'2024-04-01',
+    id:'U1001',country:'US',source:'Website',join:'2024-04-01',score:92,
     automations:[
       {channel:'email',status:'active',time:'2024-05-23 12:00'},
       {channel:'sms',status:'active',time:'2024-05-22 09:00'}
     ]
   },
   {
-    id:'U1002',country:'CA',source:'Referral',join:'2024-03-15',
+    id:'U1002',country:'CA',source:'Referral',join:'2024-03-15',score:80,
     automations:[
       {channel:'wallet',status:'paused',time:'2024-05-18 14:30'}
     ]
   },
   {
-    id:'U1003',country:'GB',source:'Ad',join:'2024-02-20',
+    id:'U1003',country:'GB',source:'Ad',join:'2024-02-20',score:70,
     automations:[
       {channel:'email',status:'completed',time:'2024-05-10 08:00'}
+    ]
+  },
+  {
+    id:'U1004',country:'US',source:'Website',join:'2024-03-22',score:78,
+    automations:[
+      {channel:'sms',status:'active',time:'2024-05-25 13:10'}
+    ]
+  },
+  {
+    id:'U1005',country:'DE',source:'Referral',join:'2024-04-15',score:84,
+    automations:[
+      {channel:'wallet',status:'completed',time:'2024-05-20 15:40'}
+    ]
+  },
+  {
+    id:'U1006',country:'FR',source:'Ad',join:'2024-05-01',score:68,
+    automations:[
+      {channel:'email',status:'active',time:'2024-05-28 09:20'}
     ]
   }
 ];
@@ -579,7 +604,8 @@ function renderUsers(){
     const channels=[...new Set(u.automations.map(a=>a.channel))];
     const tr=document.createElement('tr');
     tr.dataset.index=idx;
-    tr.innerHTML=`<td>${u.id}</td><td>${u.country}</td><td>${u.source}</td><td>${u.join}</td><td>${active}</td><td>${last}</td><td>${channels.map(c=>'<span class="tag '+c+'">'+c+'</span>').join(' ')}</td>`;
+    const scoreClass=u.score>=80?'score-high':'';
+    tr.innerHTML=`<td>${u.id}</td><td>${u.country}</td><td>${u.source}</td><td>${u.join}</td><td>${active}</td><td>${last}</td><td>${channels.map(c=>'<span class=\"tag '+c+'\">'+c+'</span>').join(' ')}</td><td class=\"${scoreClass}\">${u.score}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -984,7 +1010,14 @@ if(dashNextBtn){
   dashNextBtn.onclick=()=>showScene(5);
 }
 
-q('restartBtn').onclick=()=>showScene(0);
+function resetDemo(){
+  sessionStorage.clear();
+  localStorage.removeItem('offers');
+  localStorage.removeItem('optedInBrands');
+  location.reload();
+}
+
+q('restartBtn').onclick=resetDemo;
 
 window.onload=()=>{
   if(!localStorage.getItem('offers')){
