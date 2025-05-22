@@ -152,3 +152,22 @@ input[type="file"]:focus-visible {
   align-self: flex-end;
 }
 
+#dashboard {
+  max-width: 960px;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 auto;
+}
+
+#dashboard > div {
+  margin-bottom: 10px;
+}
+
+#finalOverlay .modal-content {
+  max-width: 80%;
+  margin: 10% auto;
+  text-align: center;
+}
+

@@ -12,6 +12,9 @@ const landing = q('landing');
 const dashboard = q('dashboard');
 const optInBtn = q('optInBtn');
 const featuredBrandEl = q('featuredBrand');
+const summaryDiv = q('summary');
+const finalOverlay = q('finalOverlay');
+const replayBtn = q('replayBtn');
 
 const brandNames = [
   'Bambino Diapers',
@@ -74,9 +77,10 @@ function updateDashboard(){
   offersDiv.innerHTML = '<h3>Current Offers</h3>';
   const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
   brands.forEach(b => {
-    const p = document.createElement('p');
-    p.textContent = b;
-    brandsDiv.appendChild(p);
+    const div = document.createElement('div');
+    div.className = 'tile card';
+    div.textContent = b;
+    brandsDiv.appendChild(div);
   });
   const offers = JSON.parse(localStorage.getItem('offers') || '[]');
   offers.forEach(o => {
@@ -84,6 +88,17 @@ function updateDashboard(){
     p.textContent = o.brand + ': ' + o.reward;
     offersDiv.appendChild(p);
   });
+
+  if(summaryDiv){
+    const totalAsk = offers.reduce((sum, o) => {
+      const m = o.reward.match(/(\d+)\s*ASK/);
+      return m ? sum + parseInt(m[1]) : sum;
+    }, 0);
+    const recent = offers.slice(-3).map(o => o.brand + ': ' + o.reward).join('<br>');
+    summaryDiv.innerHTML = '<h3>Summary</h3>' +
+      `<p>Total ASK Earned: ${totalAsk}</p>` +
+      (recent ? `<p>Recent Activity:</p><p>${recent}</p>` : '');
+  }
 }
 
 function checkOffers(){
@@ -146,6 +161,10 @@ function guidedDemo(){
   });
 }
 
+function showFinalOverlay(){
+  if(finalOverlay) finalOverlay.classList.remove('hidden');
+}
+
 optInBtn.onclick = () => {
   const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
   if(!brands.includes(featuredBrand)){
@@ -158,14 +177,24 @@ optInBtn.onclick = () => {
 
 sendBtn.onclick = handleSend;
 
+if(replayBtn){
+  replayBtn.onclick = () => {
+    window.location.href = 'index.html';
+  };
+}
+
 window.onload = function(){
   if(featuredBrandEl) featuredBrandEl.textContent = featuredBrand;
   updateDashboard();
   setInterval(checkOffers, 3000);
-  if(scene === 'final' && demo){
-    startChat();
-  }
-  if(demo && scene !== 'final'){
-    setTimeout(guidedDemo, 500);
+  if(scene === 'final'){
+    landing.classList.add('hidden');
+    chatDiv.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    showFinalOverlay();
+  } else {
+    if(demo){
+      setTimeout(guidedDemo, 500);
+    }
   }
 };
