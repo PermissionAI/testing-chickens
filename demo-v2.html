@@ -862,30 +862,46 @@ q('launchBtn').onclick = () => {
 };
 
 function showOfferSummary(txt){
-  appendBrand('Good idea, adding a coupon. Can I increase your reward for a good fit?','ai');
-  appendBrand('Yes. We can go up to 2500 ASK for a verified match with our targeting.','user');
-  appendBrand('Perfect. Click below to go live.','ai');
-  const reward='2500 ASK + $5 off';
-  const go=document.createElement('button');
-  go.className='button';
-  go.textContent='Go Live';
-  go.onclick=()=>{
-    const offers=JSON.parse(localStorage.getItem('offers')||'[]');
-    offers.push({brand:brand,reward:reward});
-    localStorage.setItem('offers',JSON.stringify(offers));
-    const done=document.createElement('p');
-    done.className='ai';
-    done.textContent='Campaign live!';
-    q('brandLog').appendChild(done);
-    const nextBtn=document.createElement('button');
-    nextBtn.className='button scene-next';
-    nextBtn.textContent='Next';
-    nextBtn.onclick=()=>{showScene(3);};
-    q('brandLog').appendChild(nextBtn);
-    q('brandLog').scrollTop=q('brandLog').scrollHeight;
-  };
-  q('brandLog').appendChild(go);
-  q('brandLog').scrollTop=q('brandLog').scrollHeight;
+  const btn=q('brandNextBtn');
+  btn.onclick=null;
+  const lines=[
+    {cls:'ai',msg:'Good idea, adding a coupon. Can I increase your reward for a good fit?'},
+    {cls:'user',msg:'Yes. We can go up to 2500 ASK for a verified match with our targeting.'},
+    {cls:'ai',msg:'Perfect. Click below to go live.'}
+  ];
+  let idx=0;
+  function next(){
+    appendBrand(lines[idx].msg,lines[idx].cls);
+    idx++;
+    if(idx===lines.length){
+      btn.onclick=null;
+      hideBrandNext();
+      const reward='2500 ASK + $5 off';
+      const go=document.createElement('button');
+      go.className='button';
+      go.textContent='Go Live';
+      go.onclick=()=>{
+        const offers=JSON.parse(localStorage.getItem('offers')||'[]');
+        offers.push({brand:brand,reward:reward});
+        localStorage.setItem('offers',JSON.stringify(offers));
+        const done=document.createElement('p');
+        done.className='ai';
+        done.textContent='Campaign live!';
+        q('brandLog').appendChild(done);
+        const nextBtn=document.createElement('button');
+        nextBtn.className='button scene-next';
+        nextBtn.textContent='Next';
+        nextBtn.onclick=()=>{showScene(3);};
+        q('brandLog').appendChild(nextBtn);
+        q('brandLog').scrollTop=q('brandLog').scrollHeight;
+      };
+      q('brandLog').appendChild(go);
+      q('brandLog').scrollTop=q('brandLog').scrollHeight;
+    }
+  }
+  btn.onclick=next;
+  showBrandNext();
+  next();
 }
 
 q('brandNextBtn').onclick = handleBrandNext;
