@@ -36,8 +36,8 @@ test('user page flow progresses to verification', () => {
 test('brand portal flow reaches go live', () => {
   const ids = [
     'chatLog','nextBtn','wizard','step1','step1Next','step2','step2Next',
-    'step3','launchBtn','audienceInput','adHeadline','adCopy','previewHeadline',
-    'previewBody','summary','minChatBtn','openChatBtn'
+    'step3','step3Next','step4','launchBtn','audienceInput','adHeadline','adCopy',
+    'previewHeadline','previewBody','previewImg','creativeImg','summary','minChatBtn','openChatBtn'
   ];
   const { document, window } = makeDOM(ids);
   const context = vm.createContext({
@@ -61,6 +61,7 @@ test('brand portal flow reaches go live', () => {
   nextBtn.onclick();
   document.getElementById('step1Next').onclick();
   document.getElementById('step2Next').onclick();
+  document.getElementById('step3Next').onclick();
   document.getElementById('launchBtn').onclick();
   const goBtn = document.getElementById('summary').children[0];
   goBtn.onclick();

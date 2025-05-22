@@ -39,9 +39,14 @@
       <div id="step3" class="step hidden">
         <h2>Preview Ad</h2>
         <div class="tile card preview-ad">
+          <img id="previewImg" class="image-responsive" alt="Ad preview">
           <h3 id="previewHeadline"></h3>
           <p id="previewBody"></p>
         </div>
+        <button id="step3Next" class="button">Next</button>
+      </div>
+      <div id="step4" class="step hidden">
+        <h2>Launch Campaign</h2>
         <button id="launchBtn" class="button">Launch Campaign</button>
       </div>
     </div>
@@ -58,6 +63,8 @@
   const wizard = document.getElementById('wizard');
   const step1Next = document.getElementById('step1Next');
   const step2Next = document.getElementById('step2Next');
+  const step3Next = document.getElementById('step3Next');
+  const previewImg = document.getElementById('previewImg');
   const launchBtn = document.getElementById('launchBtn');
   const audienceInput = document.getElementById('audienceInput');
   const adHeadlineEl = document.getElementById('adHeadline');
@@ -155,11 +162,17 @@
 
   step2Next.onclick = () => {
     document.getElementById('step2').classList.add('hidden');
+    previewImg.src = document.getElementById('creativeImg').src;
     document.getElementById('step3').classList.remove('hidden');
   };
 
-  launchBtn.onclick = () => {
+  step3Next.onclick = () => {
     document.getElementById('step3').classList.add('hidden');
+    document.getElementById('step4').classList.remove('hidden');
+  };
+
+  launchBtn.onclick = () => {
+    document.getElementById('step4').classList.add('hidden');
     wizard.classList.add('hidden');
     handleNext();
   };
@@ -208,6 +221,7 @@
       () => nextBtn.click(),
       () => step1Next.click(),
       () => step2Next.click(),
+      () => step3Next.click(),
       () => launchBtn.click(),
       () => nextBtn.click()
     ];
