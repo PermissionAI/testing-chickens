@@ -14,3 +14,7 @@ through:
 
 The demo uses `localStorage` and `sessionStorage`, so running everything in the
 same browser tab will let the pages share data.
+
+## Presenter Shell
+
+For a simple click-through presentation of the demo scenes, open `shell.html`. Use the **Next** button to advance from the Intro through each scene until the end.
