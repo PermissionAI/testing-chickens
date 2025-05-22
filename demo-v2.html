@@ -374,13 +374,11 @@ input[type="file"]:focus-visible {
 }
 
 .detail-panel {
-  position: fixed;
-  right: 10px;
-  top: 50px;
+  max-width: 400px;
+  width: 90%;
   background: #fff;
   border: 1px solid #ccc;
   padding: 10px;
-  max-width: 300px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
@@ -576,12 +574,14 @@ input[type="file"]:focus-visible {
     </select>
   </div>
   <div id="userGrid" class="user-grid"></div>
-    <div id="detailPanel" class="hidden detail-panel">
-      <h3>User Timeline</h3>
-      <ul id="timeline"></ul>
-      <h3>Available Data</h3>
-      <ul id="dataList"></ul>
-      <button id="closeDetail" class="button">Close</button>
+    <div id="detailPanel" class="modal-overlay hidden" role="dialog" aria-modal="true">
+      <div class="modal-content detail-panel">
+        <h3>User Timeline</h3>
+        <ul id="timeline"></ul>
+        <h3>Available Data</h3>
+        <ul id="dataList"></ul>
+        <button id="closeDetail" class="button">Close</button>
+      </div>
     </div>
   <button id="dashboardNextBtn" class="button scene-next">Next</button>
 </div>
