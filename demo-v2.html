@@ -379,6 +379,7 @@ input[type="file"]:focus-visible {
     </div>
     <button id="brandNextBtn" class="button">Next</button>
   </div>
+  <button id="brandOpenChat" class="button chat-open hidden">Chat</button>
   <div id="brandSummary" class="hidden container-medium"></div>
 </div>
 <div id="finalSection" class="hidden container-medium">
@@ -484,42 +485,134 @@ q('verifyCompleteBtn').onclick=()=>{
 q('sceneNextBtn').onclick=()=>showScene(2);
 
 // ----- Brand Portal -----
-const brandConv=[
-  {ai:'Welcome back. Who are you hoping to connect with today?',user:'New parents. Ideally household income over 100k. First-time families.'},
-  {ai:'Got it. Want to include your CRM list?',user:null},
-  {ai:'Want to reach families already on Permission too?',user:'Yes — let\'s offer 800 ASK + $5 off.'}
+const params = new URLSearchParams(window.location.search);
+const demo = params.get('demo');
+
+const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
+const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
+let bPair = 0;
+let bExpect = 'user';
+const brandConv = [
+  { ai: 'Welcome back. Who are you hoping to connect with today?',
+    user: 'New parents. Ideally household income over 100k. First-time families.' },
+  { ai: 'Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?',
+    user: null },
+  { ai: 'Want to reach families already on Permission too? You can offer them a reward to join you.',
+    user: 'Yes \u2014 let\u2019s offer 800 ASK + $5 off.' }
 ];
-let bPair=0; let bExpect='ai';
-function appendBrand(msg,cls){
-  const p=document.createElement('p');
-  p.textContent=msg;
-  if(cls) p.className=cls;
+
+function appendBrand(msg, cls){
+  const p = document.createElement('p');
+  p.textContent = msg;
+  if(cls) p.className = cls;
   q('brandLog').appendChild(p);
-  q('brandLog').scrollTop=q('brandLog').scrollHeight;
+  q('brandLog').scrollTop = q('brandLog').scrollHeight;
 }
-function brandNext(){
-  if(bPair>=brandConv.length) return;
-  const c=brandConv[bPair];
-  if(bExpect==='ai'){
-    appendBrand(c.ai,'ai');
-    bExpect='user';
-  }else{
-    if(c.user){appendBrand(c.user,'user'); bPair++; bExpect='ai';}
-    else{showWizardButton();}
-  }
-  if(bPair===brandConv.length && bExpect==='ai'){
-    q('brandSummary').textContent='Campaign live!';
-    q('brandNextBtn').classList.add('hidden');
-    setTimeout(()=>showScene(3),600);
-  }
+
+function showWizard(){
+  q('wizard').classList.remove('hidden');
 }
-q('brandNextBtn').onclick=brandNext;
+
 function showWizardButton(){
-  const btn=document.createElement('button');
-  btn.className='button';
-  btn.textContent='Open Builder';
-  btn.onclick=()=>{btn.remove();q('wizard').classList.remove('hidden');};
+  const btn = document.createElement('button');
+  btn.className = 'button';
+  btn.textContent = 'Open Builder';
+  btn.onclick = () => {
+    btn.remove();
+    showWizard();
+    bPair++;
+    bExpect = 'ai';
+  };
   q('brandLog').appendChild(btn);
+}
+
+function handleBrandNext(){
+  if(bPair >= brandConv.length) return;
+  const curr = brandConv[bPair];
+  if(bExpect === 'user'){
+    if(curr.user){
+      appendBrand(curr.user, 'user');
+      bPair++;
+      if(bPair === brandConv.length){
+        showOfferSummary(curr.user);
+      }
+      bExpect = 'ai';
+    } else {
+      // waiting for wizard button
+    }
+  } else {
+    appendBrand(curr.ai, 'ai');
+    bExpect = 'user';
+    if(bPair === 1){
+      showWizardButton();
+    }
+  }
+}
+
+function generateCreative(){
+  const head = 'Welcome New Parents!';
+  const body = 'Save on essentials for your growing family with ' + brand + '.';
+  q('adHeadline').textContent = head;
+  q('adCopy').textContent = body;
+  q('previewHeadline').textContent = head;
+  q('previewBody').textContent = body;
+}
+
+q('step1Next').onclick = () => {
+  q('step1').classList.add('hidden');
+  generateCreative();
+  q('step2').classList.remove('hidden');
+  handleBrandNext();
+};
+
+q('step2Next').onclick = () => {
+  q('step2').classList.add('hidden');
+  q('step3').classList.remove('hidden');
+};
+
+q('launchBtn').onclick = () => {
+  q('step3').classList.add('hidden');
+  q('wizard').classList.add('hidden');
+  handleBrandNext();
+};
+
+function showOfferSummary(txt){
+  const summary = q('brandSummary');
+  summary.innerHTML = '<p>' + txt + '</p>';
+  const go = document.createElement('button');
+  go.className = 'button';
+  go.textContent = 'Go Live';
+  go.onclick = () => {
+    const offers = JSON.parse(localStorage.getItem('offers') || '[]');
+    offers.push({brand: brand, reward: txt});
+    localStorage.setItem('offers', JSON.stringify(offers));
+    summary.innerHTML = '<p>Campaign live!</p>';
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'button';
+    nextBtn.textContent = 'Next';
+    nextBtn.onclick = () => {
+      showScene(3);
+    };
+    summary.appendChild(nextBtn);
+  };
+  summary.appendChild(go);
+  summary.classList.remove('hidden');
+}
+
+q('brandNextBtn').onclick = handleBrandNext;
+
+if(q('brandMinChat')){
+  q('brandMinChat').onclick = () => {
+    q('brandChat').classList.add('hidden');
+    if(q('brandOpenChat')) q('brandOpenChat').classList.remove('hidden');
+  };
+}
+
+if(q('brandOpenChat')){
+  q('brandOpenChat').onclick = () => {
+    q('brandChat').classList.remove('hidden');
+    q('brandOpenChat').classList.add('hidden');
+  };
 }
 
 q('restartBtn').onclick=()=>showScene(0);
