@@ -58,7 +58,6 @@ test('brand portal flow reaches go live', () => {
   nextBtn.onclick();
   const openBuilder = document.getElementById('chatLog').querySelector('button');
   openBuilder.onclick();
-  nextBtn.onclick();
   document.getElementById('step1Next').onclick();
   document.getElementById('step2Next').onclick();
   document.getElementById('step3Next').onclick();
@@ -116,5 +115,5 @@ test('only one chat button active at a time', () => {
   assert.strictEqual(countButtons(), 1);
 
   document.getElementById('verifyCompleteBtn').onclick();
-  assert.strictEqual(countButtons(), 1);
+  assert.strictEqual(countButtons(), 0);
 });

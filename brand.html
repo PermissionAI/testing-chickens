@@ -74,7 +74,11 @@
   const summary = document.getElementById('summary');
   const minChatBtn = document.getElementById('minChatBtn');
   const openChatBtn = document.getElementById('openChatBtn');
+  let actionBtn = null;
   nextBtn.onclick = handleNext;
+
+  function hideNext(){ nextBtn.classList.add('hidden'); }
+  function showNext(){ nextBtn.classList.remove('hidden'); }
 
   const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
   const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
@@ -108,26 +112,34 @@
   }
 
   function showWizardButton(){
+    hideNext();
+    if(actionBtn) actionBtn.remove();
     const btn = document.createElement('button');
     btn.className = 'button';
     btn.textContent = 'Open Builder';
     btn.onclick = () => {
       btn.remove();
+      actionBtn = null;
       showWizard();
       pair++;
       expecting = 'ai';
     };
+    actionBtn = btn;
     log.appendChild(btn);
   }
 
   function handleNext(){
-    if(pair >= conversation.length) return;
+    if(pair >= conversation.length){
+      hideNext();
+      return;
+    }
     const curr = conversation[pair];
     if(expecting === 'user'){
       if(curr.user){
         append(curr.user, 'user');
         pair++;
         if(pair === conversation.length){
+          hideNext();
           showOfferSummary(curr.user);
         }
         expecting = 'ai';
@@ -174,6 +186,7 @@
   launchBtn.onclick = () => {
     document.getElementById('step4').classList.add('hidden');
     wizard.classList.add('hidden');
+    hideNext();
     handleNext();
   };
 
@@ -237,6 +250,7 @@
 
   window.onload = () => {
     append(conversation[0].ai, 'ai');
+    showNext();
     if(demo){
       setTimeout(guidedDemo, 500);
     }
