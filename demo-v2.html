@@ -327,6 +327,46 @@ input[type="file"]:focus-visible {
   flex-wrap: wrap;
 }
 
+.user-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 600px) {
+  .user-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.user-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-card .channel-tags { margin-top: 6px; }
+.user-card .status { font-weight: bold; }
+
+.chart-placeholder {
+  height: 150px;
+  border-radius: 8px;
+  background: repeating-linear-gradient(45deg,#e5e7eb,#e5e7eb 10px,#f3f4f6 10px,#f3f4f6 20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.bar {display:flex;align-items:center;margin:4px 0;font-size:12px;gap:4px;}
+.bar-inner{height:8px;background:var(--color-primary);border-radius:4px;flex-grow:1;}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+  color: #666;
+}
+
 .detail-panel {
   position: fixed;
   right: 10px;
@@ -487,12 +527,13 @@ input[type="file"]:focus-visible {
 </div>
 <div id="finalSection" class="hidden container-medium">
   <h2>Automation Dashboard</h2>
+  <div id="chartPlaceholder" class="chart-placeholder">Chart Placeholder</div>
   <div id="filterBar" class="dashboard-filters">
     <select id="channelFilter">
       <option value="">All Channels</option>
-      <option value="email">Email</option>
-      <option value="sms">SMS</option>
-      <option value="wallet">In-wallet</option>
+      <option value="email">&#128231; Email</option>
+      <option value="sms">&#128241; SMS</option>
+      <option value="wallet">&#128091; In-wallet</option>
     </select>
     <select id="statusFilter">
       <option value="">All Statuses</option>
@@ -506,21 +547,7 @@ input[type="file"]:focus-visible {
       <option value="90">Last 90 days</option>
     </select>
   </div>
-  <table id="userTable" class="dashboard-table">
-    <thead>
-      <tr>
-        <th>User ID</th>
-        <th>Country</th>
-        <th>Source</th>
-        <th>Join Date</th>
-        <th>Automations</th>
-        <th>Last Trigger</th>
-        <th>Channels</th>
-        <th>Match Score</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div id="userGrid" class="user-grid"></div>
   <div id="detailPanel" class="hidden detail-panel">
     <h3>User Timeline</h3>
     <ul id="timeline"></ul>
@@ -591,28 +618,54 @@ const automationUsers=[
   }
 ];
 
+const icons={email:'\uD83D\uDCE7',sms:'\uD83D\uDCF1',wallet:'\uD83D\uDC91'};
+function icon(c){return icons[c]||'';}
+
 function lastTrigger(autos){
   return autos.reduce((a,b)=>a>b.time?a:b.time,'');
 }
 
+function renderChart(){
+  const counts={email:0,sms:0,wallet:0};
+  automationUsers.forEach(u=>{
+    u.automations.forEach(a=>{if(a.status==='active') counts[a.channel] = (counts[a.channel]||0)+1;});
+  });
+  const total=counts.email+counts.sms+counts.wallet||1;
+  const chart=q('chartPlaceholder');
+  if(!chart) return;
+  chart.innerHTML=['email','sms','wallet'].map(c=>{
+    const pct=Math.round(counts[c]/total*100);
+    return `<div class="bar"><span>${icon(c)}</span><div class="bar-inner" style="width:${pct}%"></div></div>`;
+  }).join('');
+}
+
 function renderUsers(){
-  const tbody=q('userTable').querySelector('tbody');
-  tbody.innerHTML='';
+  const grid=q('userGrid');
+  grid.innerHTML='';
   const chan=q('channelFilter').value;
   const status=q('statusFilter').value;
+  let count=0;
   automationUsers.forEach((u,idx)=>{
     const hasChan=!chan||u.automations.some(a=>a.channel===chan);
     const hasStatus=!status||u.automations.some(a=>a.status===status);
     if(!hasChan||!hasStatus) return;
+    count++;
     const last=lastTrigger(u.automations);
-    const active=u.automations.filter(a=>a.status==='active').length;
+    const statuses=[...new Set(u.automations.map(a=>a.status))];
     const channels=[...new Set(u.automations.map(a=>a.channel))];
-    const tr=document.createElement('tr');
-    tr.dataset.index=idx;
-    const scoreClass=u.score>=80?'score-high':'';
-    tr.innerHTML=`<td>${u.id}</td><td>${u.country}</td><td>${u.source}</td><td>${u.join}</td><td>${active}</td><td>${last}</td><td>${channels.map(c=>'<span class=\"tag '+c+'\">'+c+'</span>').join(' ')}</td><td class=\"${scoreClass}\">${u.score}</td>`;
-    tbody.appendChild(tr);
+    const card=document.createElement('div');
+    card.className='user-card';
+    card.dataset.index=idx;
+    const chanTags=channels.map(c=>`<span class="tag ${c}">${icon(c)} ${c}</span>`).join(' ');
+    card.innerHTML=`<div><strong>${u.id}</strong> - ${u.country}</div>
+    <div class="meta source">${u.source}</div>
+    <div class="channel-tags">${chanTags}</div>
+    <div class="meta"><span>${last}</span> <span class="status">${statuses.join(', ')}</span></div>`;
+    grid.appendChild(card);
   });
+  if(count===0){
+    grid.innerHTML='<p class="empty-state">No automations found</p>';
+  }
 }
 
 function showDetail(user){
@@ -675,6 +728,7 @@ function showScene(i){
   }
   if(i===4){
     updateWrapUp();
+    renderChart();
     renderUsers();
   }
   if(i===4||i===5){
@@ -1017,10 +1071,10 @@ if(q('offerOpenChat')){
 
 // ----- Automation Dashboard Events -----
 if(q('closeDetail')) q('closeDetail').onclick=()=>q('detailPanel').classList.add('hidden');
-if(q('userTable')){
-  q('userTable').onclick=e=>{
-    const row=e.target.closest('tr');
-    if(row) showDetail(automationUsers[row.dataset.index]);
+if(q('userGrid')){
+  q('userGrid').onclick=e=>{
+    const card=e.target.closest('.user-card');
+    if(card) showDetail(automationUsers[card.dataset.index]);
   };
 }
 ['channelFilter','statusFilter','rangeFilter'].forEach(id=>{
@@ -1050,6 +1104,7 @@ window.onload=()=>{
   if(!localStorage.getItem('optedInBrands')){
     localStorage.setItem('optedInBrands', JSON.stringify(['EcoBaby','Happy Tush']));
   }
+  renderChart();
   renderUsers();
   showScene(0);
 };
