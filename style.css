@@ -8,7 +8,7 @@ body {
 
 *[tabindex]:focus-visible,
 input[type="file"]:focus-visible {
-  outline: 0.125rem solid #4d65ff;
+  outline: 0.125rem solid #006633;
   outline-offset: 0.125rem;
 }
 
@@ -31,7 +31,7 @@ input[type="file"]:focus-visible {
 #chatLog {
   border: 1px solid #ccc;
   padding: 10px;
-  height: 200px;
+  height: 266px;
   overflow-y: auto;
   margin-bottom: 10px;
 }
@@ -56,7 +56,7 @@ input[type="file"]:focus-visible {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #00A9E0;
+  background: #008000;
   color: #fff;
   padding: 6px 10px;
   cursor: pointer;
@@ -81,8 +81,14 @@ input[type="file"]:focus-visible {
   flex-direction: column;
 }
 
+#brandLog {
+  height: 266px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
 .button {
-  background: #00A9E0;
+  background: #008000;
   color: #FFFFFF;
   border-radius: 8px;
   padding: 12px 24px;
@@ -91,7 +97,7 @@ input[type="file"]:focus-visible {
 }
 
 .button:hover {
-  background: #008C9E;
+  background: #006633;
 }
 
 .text-align-center {
@@ -183,19 +189,19 @@ input[type="file"]:focus-visible {
 }
 
 .footer-link:hover {
-  color: #00A9E0;
+  color: #008000;
 }
 
 .chat-box {
   background: rgba(255, 255, 255, 0.95);
   display: flex;
   flex-direction: column;
-  height: 300px;
+  height: 400px;
 }
 
 .callout {
   font-size: 14px;
-  color: #00A9E0;
+  color: #008000;
   margin-bottom: 8px;
   font-weight: bold;
 }

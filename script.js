@@ -65,6 +65,7 @@ function displaySequence(msgs, done){
 function showChat(){
   landing.classList.add('hidden');
   chatDiv.classList.remove('hidden');
+  chatDiv.style.display = '';
   if(openChatBtn) openChatBtn.classList.add('hidden');
 }
 
@@ -186,7 +187,6 @@ function autoDemo(){
 }
 
 function guidedDemo(){
-  optInBtn.click();
   nextBtn.addEventListener('click', () => {
     if(pair < conversation.length){
       // prefill is implicit; just advance
@@ -210,6 +210,7 @@ nextBtn.onclick = handleNext;
 if(minChatBtn){
   minChatBtn.onclick = () => {
     chatDiv.classList.add('hidden');
+    chatDiv.style.display = 'none';
     if(openChatBtn) openChatBtn.classList.remove('hidden');
   };
 }

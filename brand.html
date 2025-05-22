@@ -14,38 +14,38 @@
       <button id="minBrandChatBtn">&#8211;</button>
     </div>
     <div id="brandLog" class="chat-box"></div>
+    <div id="wizard" class="hidden container-medium">
+      <div id="step1" class="step">
+        <h2>Define Audience</h2>
+        <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
+        <button id="step1Next" class="button">Next</button>
+      </div>
+      <div id="step2" class="step hidden">
+        <h2>Generate Creative & Copy</h2>
+        <div class="placeholder-img">Image</div>
+        <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
+        <p><strong>Body:</strong> <span id="adCopy"></span></p>
+        <label>Format:
+          <select id="formatSelect">
+            <option>Square</option>
+            <option>Vertical</option>
+            <option>Horizontal</option>
+          </select>
+        </label><br>
+        <button id="step2Next" class="button">Next</button>
+      </div>
+      <div id="step3" class="step hidden">
+        <h2>Preview Ad</h2>
+        <div class="tile card preview-ad">
+          <h3 id="previewHeadline"></h3>
+          <p id="previewBody"></p>
+        </div>
+        <button id="launchBtn" class="button">Launch Campaign</button>
+      </div>
+    </div>
     <button id="brandNext" class="button">Next</button>
   </div>
   <button id="openBrandChatBtn" class="button chat-open hidden">Chat</button>
-  <div id="wizard" class="hidden container-medium">
-    <div id="step1" class="step">
-      <h2>Define Audience</h2>
-      <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
-      <button id="step1Next" class="button">Next</button>
-    </div>
-    <div id="step2" class="step hidden">
-      <h2>Generate Creative & Copy</h2>
-      <div class="placeholder-img">Image</div>
-      <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
-      <p><strong>Body:</strong> <span id="adCopy"></span></p>
-      <label>Format:
-        <select id="formatSelect">
-          <option>Square</option>
-          <option>Vertical</option>
-          <option>Horizontal</option>
-        </select>
-      </label><br>
-      <button id="step2Next" class="button">Next</button>
-    </div>
-    <div id="step3" class="step hidden">
-      <h2>Preview Ad</h2>
-      <div class="tile card preview-ad">
-        <h3 id="previewHeadline"></h3>
-        <p id="previewBody"></p>
-      </div>
-      <button id="launchBtn" class="button">Launch Campaign</button>
-    </div>
-  </div>
   <div id="summary" class="hidden container-medium"></div>
   <script>
   const params = new URLSearchParams(window.location.search);
