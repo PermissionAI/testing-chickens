@@ -8,12 +8,12 @@
 </head>
 <body class="container-medium text-align-center">
   <h1>Permission Brand Portal</h1>
-  <div id="brandChat" class="chat-box">
+  <div id="chat" class="chat-box">
     <div class="chat-header">
       <span>Chat</span>
-      <button id="minBrandChatBtn">&#8211;</button>
+      <button id="minChatBtn">&#8211;</button>
     </div>
-    <div id="brandLog" class="chat-box"></div>
+    <div id="chatLog" class="chat-box"></div>
     <div id="wizard" class="hidden container-medium">
       <div id="step1" class="step">
         <h2>Define Audience</h2>
@@ -43,16 +43,16 @@
         <button id="launchBtn" class="button">Launch Campaign</button>
       </div>
     </div>
-    <button id="brandNext" class="button">Next</button>
+    <button id="nextBtn" class="button">Next</button>
   </div>
-  <button id="openBrandChatBtn" class="button chat-open hidden">Chat</button>
+  <button id="openChatBtn" class="button chat-open hidden">Chat</button>
   <div id="summary" class="hidden container-medium"></div>
   <script>
   const params = new URLSearchParams(window.location.search);
   const demo = params.get('demo');
 
-  const log = document.getElementById('brandLog');
-  const brandNext = document.getElementById('brandNext');
+  const log = document.getElementById('chatLog');
+  const nextBtn = document.getElementById('nextBtn');
   const wizard = document.getElementById('wizard');
   const step1Next = document.getElementById('step1Next');
   const step2Next = document.getElementById('step2Next');
@@ -63,9 +63,9 @@
   const previewHeadline = document.getElementById('previewHeadline');
   const previewBody = document.getElementById('previewBody');
   const summary = document.getElementById('summary');
-  const minBrandChatBtn = document.getElementById('minBrandChatBtn');
-  const openBrandChatBtn = document.getElementById('openBrandChatBtn');
-  brandNext.onclick = handleNext;
+  const minChatBtn = document.getElementById('minChatBtn');
+  const openChatBtn = document.getElementById('openChatBtn');
+  nextBtn.onclick = handleNext;
 
   const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
   const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
@@ -96,6 +96,7 @@
 
   function showWizard(){
     wizard.classList.remove('hidden');
+    nextBtn.classList.add('hidden');
   }
 
   function showWizardButton(){
@@ -158,6 +159,7 @@
   launchBtn.onclick = () => {
     document.getElementById('step3').classList.add('hidden');
     wizard.classList.add('hidden');
+    nextBtn.classList.remove('hidden');
     handleNext();
   };
 
@@ -184,29 +186,29 @@
     summary.classList.remove('hidden');
   }
 
-  if(minBrandChatBtn){
-    minBrandChatBtn.onclick = () => {
-      document.getElementById('brandChat').classList.add('hidden');
-      if(openBrandChatBtn) openBrandChatBtn.classList.remove('hidden');
+  if(minChatBtn){
+    minChatBtn.onclick = () => {
+      document.getElementById('chat').classList.add('hidden');
+      if(openChatBtn) openChatBtn.classList.remove('hidden');
     };
   }
 
-  if(openBrandChatBtn){
-    openBrandChatBtn.onclick = () => {
-      document.getElementById('brandChat').classList.remove('hidden');
-      openBrandChatBtn.classList.add('hidden');
+  if(openChatBtn){
+    openChatBtn.onclick = () => {
+      document.getElementById('chat').classList.remove('hidden');
+      openChatBtn.classList.add('hidden');
     };
   }
 
   function guidedDemo(){
     const actions = [
-      () => brandNext.click(),
-      () => brandNext.click(),
-      () => brandNext.click(),
+      () => nextBtn.click(),
+      () => nextBtn.click(),
+      () => nextBtn.click(),
       () => step1Next.click(),
       () => step2Next.click(),
       () => launchBtn.click(),
-      () => brandNext.click()
+      () => nextBtn.click()
     ];
     let i = 0;
     function run(){
