@@ -288,6 +288,7 @@ window.onload = function(){
   setInterval(checkOffers, 3000);
   if(scene === 'final'){
     showChat();
+    document.body.classList.add('scene-final');
   }
   if(demo && scene !== 'final'){
     setTimeout(guidedDemo, 500);
