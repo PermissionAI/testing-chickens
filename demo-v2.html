@@ -436,26 +436,19 @@ input[type="file"]:focus-visible {
   <button id="offerOpenChat" class="button chat-open hidden">Chat</button>
 </div>
 <div id="finalSection" class="hidden container-medium">
-  <h2>Your Dashboard</h2>
-  <div id="stats" class="dashboard">
-    <div class="stat">
-      <h4>Total ASK Earned</h4>
-      <p id="totalAsk">0</p>
-    </div>
-    <div class="stat">
-      <h4>Recent Activity</h4>
-      <p id="recentActivity"></p>
-    </div>
-  </div>
-  <h3>Opted-in Brands</h3>
-  <div id="wrapBrands" class="brand-tiles"></div>
-  <h3>Earn History</h3>
-  <ul id="earnEvents"></ul>
-  <div id="wrapMessages">
-    <p class="overlay-text">Permission x Google</p>
-    <p class="overlay-text">Zero-party data. Trusted by users. Powered by AI.</p>
-  </div>
-  <p id="branding"><strong>Permission x Google – Zero-party data. Trusted by users. Powered by AI.</strong></p>
+  <h2>Marketer Dashboard</h2>
+  <p>The following data profile has been delivered:</p>
+  <ul id="dataProfile" class="dashboard">
+    <li>Verified new parents</li>
+    <li>Household income 100k+</li>
+    <li id="recentActivity">Reward accepted: 2500 ASK + $5 coupon</li>
+  </ul>
+  <p id="emailStatus">Personalized email campaign has been triggered for these new parents.</p>
+  <button id="dashboardNextBtn" class="button scene-next">Next</button>
+</div>
+<div id="brandingSection" class="hidden container-medium">
+  <p class="overlay-text">Permission x Google</p>
+  <p class="overlay-text">Zero-party data. Trusted by users. Powered by AI.</p>
   <button id="restartBtn" class="button">Replay Demo</button>
 </div>
 <button id="mainNext" class="button scene-next">Next</button>
@@ -467,11 +460,13 @@ const scenes=[
   {id:'userSection',title:'Scene 1 - User Onboarding'},
   {id:'brandSection',title:'Scene 2 - Brand Portal'},
   {id:'offerSection',title:'Scene 3 - Offer Notification'},
-  {id:'finalSection',title:'Scene 4 - Wrap Up'}
+  {id:'finalSection',title:'Scene 4 - Data Dashboard'},
+  {id:'brandingSection',title:'Scene 5 - Wrap Up'}
 ];
 let sceneIndex=0;
 let userActionBtn=null;
 let brandActionBtn=null;
+const dashNextBtn=q('dashboardNextBtn');
 
 function hideNext(){ q('nextBtn').classList.add('hidden'); }
 function showNext(){ q('nextBtn').classList.remove('hidden'); }
@@ -484,19 +479,10 @@ function parseAsk(str){
 }
 
 function updateWrapUp(){
-  const brands=JSON.parse(localStorage.getItem('optedInBrands')||'[]');
-  q('wrapBrands').innerHTML='';
-  brands.forEach(b=>{const div=document.createElement('div');div.className='tile card';div.textContent=b;q('wrapBrands').appendChild(div);});
   const offers=JSON.parse(localStorage.getItem('offers')||'[]');
-  let total=0;offers.forEach(o=>{total+=parseAsk(o.reward);});
-  q('totalAsk').textContent=total;
-  q('earnEvents').innerHTML='';
-  offers.forEach(o=>{const li=document.createElement('li');li.textContent=`${o.brand}: ${o.reward}`;q('earnEvents').appendChild(li);});
   if(offers.length){
     const last=offers[offers.length-1];
-    q('recentActivity').textContent=last.brand+': '+last.reward;
-  }else{
-    q('recentActivity').textContent='No recent activity';
+    if(q('recentActivity')) q('recentActivity').textContent='Reward accepted: '+last.reward;
   }
 }
 
@@ -529,6 +515,8 @@ function showScene(i){
   }
   if(i===4){
     updateWrapUp();
+  }
+  if(i===4||i===5){
     document.body.classList.add('scene-final');
   } else {
     document.body.classList.remove('scene-final');
@@ -630,7 +618,7 @@ const brandConv = [
   { ai: 'Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?',
     user: null },
   { ai: 'Want to reach families already on Permission too? You can offer them a reward to join you.',
-    user: 'Yes \u2014 let\u2019s offer 800 ASK + $5 off.' }
+    user: 'Yes \u2014 let\u2019s offer 2500 ASK + $5 off.' }
 ];
 
 function appendBrand(msg, cls){
@@ -765,7 +753,7 @@ let offerIdx = 0;
 const offerMsgs = [
   'Hey, just got some good news \u2014',
   'Diaper Brand 2 launched a new offer made for new parents like you.',
-  'You\u2019ve unlocked a special bonus from them \u2014 800 ASK + $5 off \u2014 because you seem like a perfect match. Want to join?'
+  'You\u2019ve unlocked a special bonus from them \u2014 2500 ASK + $5 off \u2014 because you seem like a perfect match. Want to join?'
 ];
 
 function hideOfferNext(){ q('offerNextBtn').classList.add('hidden'); }
@@ -848,6 +836,10 @@ if(q('offerOpenChat')){
     q('offerChat').classList.remove('hidden');
     q('offerOpenChat').classList.add('hidden');
   };
+}
+
+if(dashNextBtn){
+  dashNextBtn.onclick=()=>showScene(5);
 }
 
 q('restartBtn').onclick=()=>showScene(0);
