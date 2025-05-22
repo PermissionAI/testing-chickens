@@ -50,7 +50,9 @@ input[type="file"]:focus-visible {
 .hidden {
   display: none;
 }
-#chatLog {
+#chatLog,
+#brandLog,
+#offerLog {
   border: 1px solid #ccc;
   padding: 10px;
   height: 266px;
@@ -98,7 +100,9 @@ input[type="file"]:focus-visible {
   width: 200px;
   margin-bottom: 20px;
 }
-#chatLog {
+#chatLog,
+#brandLog,
+#offerLog {
   display: flex;
   flex-direction: column;
 }
@@ -359,7 +363,7 @@ input[type="file"]:focus-visible {
   </div>
   <button id="sceneNextBtn" class="button scene-next hidden">Next</button>
 </div>
-<div id="brandSection" class="hidden">
+  <div id="brandSection" class="hidden">
   <h2>Permission Brand Portal</h2>
   <div id="brandChat" class="chat-box">
     <div class="chat-header">
@@ -367,40 +371,47 @@ input[type="file"]:focus-visible {
       <button id="brandMinChat">&#8211;</button>
     </div>
     <div id="brandLog" class="chat-box" role="log" aria-live="polite"></div>
-    <div id="wizard" class="hidden container-medium">
-      <div id="step1" class="step">
-        <h3>Define Audience</h3>
-        <label for="audienceInput">Audience description</label>
-        <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
-        <button id="step1Next" class="button">Next</button>
-      </div>
-      <div id="step2" class="step hidden">
-        <h3>Generate Creative & Copy</h3>
-        <img id="creativeImg" class="placeholder-img" src="https://via.placeholder.com/300x150" alt="Ad creative preview">
-        <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
-        <p><strong>Body:</strong> <span id="adCopy"></span></p>
-        <label>Format:
-          <select id="formatSelect">
-            <option>Square</option>
-            <option>Vertical</option>
-            <option>Horizontal</option>
-          </select>
-        </label><br>
-        <button id="step2Next" class="button">Next</button>
-      </div>
-      <div id="step3" class="step hidden">
-        <h3>Preview Ad</h3>
-        <div class="tile card preview-ad">
-          <h4 id="previewHeadline"></h4>
-          <p id="previewBody"></p>
-        </div>
-        <button id="launchBtn" class="button">Launch Campaign</button>
-      </div>
-    </div>
+    
     <button id="brandNextBtn" class="button">Next</button>
   </div>
   <button id="brandOpenChat" class="button chat-open hidden">Chat</button>
-  <div id="brandSummary" class="hidden container-medium"></div>
+  <div id="wizardModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div id="wizard" class="container-medium">
+        <div id="step1" class="step">
+          <h3>Define Audience</h3>
+          <label for="audienceInput">Audience description</label>
+          <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
+          <button id="step1Next" class="button">Next</button>
+        </div>
+        <div id="step2" class="step hidden">
+          <h3>Generate Creative & Copy</h3>
+          <img id="creativeImg" class="placeholder-img" src="https://via.placeholder.com/300x150" alt="Ad creative preview">
+          <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
+          <p><strong>Body:</strong> <span id="adCopy"></span></p>
+          <label>Format:
+            <select id="formatSelect">
+              <option>Square</option>
+              <option>Vertical</option>
+              <option>Horizontal</option>
+            </select>
+          </label><br>
+          <button id="step2Next" class="button">Next</button>
+        </div>
+        <div id="step3" class="step hidden">
+          <h3>Preview Ad</h3>
+          <div class="tile card preview-ad">
+            <h4 id="previewHeadline"></h4>
+            <p id="previewBody"></p>
+          </div>
+          <button id="launchBtn" class="button">Launch Campaign</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="brandSummaryModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div id="brandSummary" class="modal-content container-medium"></div>
+  </div>
 </div>
 <div id="offerSection" class="hidden">
   <div id="offerChat" class="chat-box">
@@ -611,7 +622,7 @@ function appendBrand(msg, cls){
 }
 
 function showWizard(){
-  q('wizard').classList.remove('hidden');
+  q('wizardModal').classList.remove('hidden');
 }
 
 function showWizardButton(){
@@ -681,7 +692,7 @@ q('step2Next').onclick = () => {
 
 q('launchBtn').onclick = () => {
   q('step3').classList.add('hidden');
-  q('wizard').classList.add('hidden');
+  q('wizardModal').classList.add('hidden');
   hideBrandNext();
   handleBrandNext();
 };
@@ -703,12 +714,13 @@ function showOfferSummary(txt){
     nextBtn.className = 'button scene-next';
     nextBtn.textContent = 'Next';
     nextBtn.onclick = () => {
+      q('brandSummaryModal').classList.add('hidden');
       showScene(3);
     };
     summary.appendChild(nextBtn);
   };
   summary.appendChild(go);
-  summary.classList.remove('hidden');
+  q('brandSummaryModal').classList.remove('hidden');
 }
 
 q('brandNextBtn').onclick = handleBrandNext;

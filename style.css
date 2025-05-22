@@ -43,7 +43,9 @@ input[type="file"]:focus-visible {
 .hidden {
   display: none;
 }
-#chatLog {
+#chatLog,
+#brandLog,
+#offerLog {
   border: 1px solid #ccc;
   padding: 10px;
   height: 266px;
@@ -51,6 +53,8 @@ input[type="file"]:focus-visible {
   margin-bottom: 10px;
 }
 #chat,
+#brandChat,
+#offerChat,
 .floating-chat {
   position: fixed;
   bottom: 20px;
@@ -89,7 +93,9 @@ input[type="file"]:focus-visible {
   width: 200px;
   margin-bottom: 20px;
 }
-#chatLog {
+#chatLog,
+#brandLog,
+#offerLog {
   display: flex;
   flex-direction: column;
 }
