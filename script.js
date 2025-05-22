@@ -21,6 +21,7 @@ const wrapBrands = q('wrapBrands');
 const totalAskEl = q('totalAsk');
 const recentActivityEl = q('recentActivity');
 const restartBtn = q('restartBtn');
+const dashNextBtn = q('dashboardNextBtn');
 let actionBtn = null;
 
 function hideNext(){ nextBtn.classList.add('hidden'); }
@@ -280,6 +281,10 @@ if(openChatBtn){
 
 if(restartBtn){
   restartBtn.onclick = () => window.location.href = 'demo.html';
+}
+
+if(dashNextBtn){
+  dashNextBtn.onclick = showWrapUp;
 }
 
 window.onload = function(){
