@@ -223,7 +223,7 @@ window.onload = function(){
   if(featuredBrandEl) featuredBrandEl.textContent = featuredBrand;
   updateDashboard();
   setInterval(checkOffers, 3000);
-  if(scene === 'final' && demo){
+  if(scene === 'final'){
     showChat();
   }
   if(demo && scene !== 'final'){
