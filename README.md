@@ -1,16 +1,18 @@
 # Project Hell Yeah Demo v2
 
-This repository contains **Project Hell Yeah**, a front‑end demo that walks through a consent-driven advertising flow. The second version packages every scene into a single HTML file so you can explore the experience without navigating between pages.
+This repository contains **Project Hell Yeah**, a front‑end demo that walks through a consent-driven advertising flow. Version 2 consolidates the experience into a single HTML file and now includes an automation dashboard for marketers.
 
 ## Running the demo
 
 Open `demo-v2.html` in your browser and use **Next** to progress through:
 
-1. The user experience with an in-page chat overlay and a simulated income verification modal.
-2. The brand portal where creative is generated.
-3. The final offer view.
+1. The user onboarding flow with an in-page chat overlay and a simulated income verification modal.
+2. The brand portal where ad creative is generated.
+3. The offer notification summarizing the reward.
+4. A marketer automation dashboard highlighting recent user activity.
+5. A final wrap-up screen.
 
-State is stored in `localStorage` and `sessionStorage`, allowing everything to run in the same tab.
+A **Replay Demo** button lets you restart the experience. State is stored in `localStorage` and `sessionStorage`, so everything runs in the same tab.
 
 ## Other versions
 
