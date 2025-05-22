@@ -16,6 +16,11 @@ const openChatBtn = q('openChatBtn');
 const incomeModal = q('incomeModal');
 const verifyCompleteBtn = q('verifyCompleteBtn');
 const sceneNextBtn = q('sceneNextBtn');
+const wrapScene = q('wrapUpScene');
+const wrapBrands = q('wrapBrands');
+const totalAskEl = q('totalAsk');
+const recentActivityEl = q('recentActivity');
+const restartBtn = q('restartBtn');
 let actionBtn = null;
 
 function hideNext(){ nextBtn.classList.add('hidden'); }
@@ -64,6 +69,41 @@ function displaySequence(msgs, done){
     }
   }
   next();
+}
+
+function parseAsk(str){
+  const m = /(\d+)\s*ASK/i.exec(str || '');
+  return m ? parseInt(m[1], 10) : 0;
+}
+
+function updateWrapUp(){
+  const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
+  wrapBrands.innerHTML = '';
+  brands.forEach(b => {
+    const div = document.createElement('div');
+    div.className = 'tile card';
+    div.textContent = b;
+    wrapBrands.appendChild(div);
+  });
+  const offers = JSON.parse(localStorage.getItem('offers') || '[]');
+  let total = 0;
+  offers.forEach(o => { total += parseAsk(o.reward); });
+  totalAskEl.textContent = total;
+  if(offers.length){
+    const last = offers[offers.length-1];
+    recentActivityEl.textContent = last.brand + ': ' + last.reward;
+  } else {
+    recentActivityEl.textContent = 'No recent activity';
+  }
+}
+
+function showWrapUp(){
+  chatDiv.classList.add('hidden');
+  if(openChatBtn) openChatBtn.classList.add('hidden');
+  if(wrapScene){
+    updateWrapUp();
+    wrapScene.classList.remove('hidden');
+  }
 }
 
 function showChat(){
@@ -180,7 +220,10 @@ function checkOffers(){
           "Oh btw — have you looked into baby food subscriptions yet? Happy to help you find one if you're interested."
         ], () => {
           const next = q('nextBtn');
-          if(next) next.classList.remove('hidden');
+          if(next){
+            next.onclick = showWrapUp;
+            next.classList.remove('hidden');
+          }
         });
       };
       chatLog.appendChild(btn);
@@ -233,6 +276,10 @@ if(minChatBtn){
 
 if(openChatBtn){
   openChatBtn.onclick = showChat;
+}
+
+if(restartBtn){
+  restartBtn.onclick = () => window.location.href = 'demo.html';
 }
 
 window.onload = function(){
