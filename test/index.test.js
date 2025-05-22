@@ -91,3 +91,30 @@ test('shell scene progression', () => {
 
   assert.strictEqual(document.getElementById('sceneName').textContent, 'Scene 4 - Wrap-Up');
 });
+
+test('only one chat button active at a time', () => {
+  const ids = ['chatLog','chat','landing','dashboard','optInBtn','featuredBrand','nextBtn','minChatBtn','openChatBtn','incomeModal','verifyCompleteBtn','sceneNextBtn','brands','offers'];
+  const { document, window } = makeDOM(ids);
+  const context = vm.createContext({
+    window,
+    document,
+    localStorage: makeStorage(),
+    sessionStorage: makeStorage(),
+    URLSearchParams,
+    setInterval: () => {},
+    setTimeout: (fn) => fn(),
+    console
+  });
+  runScript('script.js', context);
+
+  document.getElementById('optInBtn').onclick();
+  const nextBtn = document.getElementById('nextBtn');
+  for (let i = 0; i < 5; i++) nextBtn.onclick();
+
+  const chatLog = document.getElementById('chatLog');
+  const countButtons = () => chatLog.children.filter(el => el.tagName === 'button').length;
+  assert.strictEqual(countButtons(), 1);
+
+  document.getElementById('verifyCompleteBtn').onclick();
+  assert.strictEqual(countButtons(), 1);
+});
