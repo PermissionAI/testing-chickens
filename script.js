@@ -13,6 +13,9 @@ const featuredBrandEl = q('featuredBrand');
 const nextBtn = q('nextBtn');
 const minChatBtn = q('minChatBtn');
 const openChatBtn = q('openChatBtn');
+const incomeModal = q('incomeModal');
+const verifyCompleteBtn = q('verifyCompleteBtn');
+const sceneNextBtn = q('sceneNextBtn');
 
 const featuredBrand = 'Diaper Brand #1';
 
