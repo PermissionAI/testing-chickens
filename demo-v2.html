@@ -293,6 +293,19 @@ input[type="file"]:focus-visible {
   gap: 10px;
 }
 
+.dashboard {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+
 .overlay-text {
   font-size: 20px;
   font-weight: bold;
@@ -418,17 +431,24 @@ input[type="file"]:focus-visible {
       <button id="offerMinChat">&#8211;</button>
     </div>
     <div id="offerLog" class="chat-box" role="log" aria-live="polite"></div>
-    <button id="offerNextBtn" class="button scene-next hidden">Next</button>
+    <button id="offerNextBtn" class="button hidden">Next</button>
   </div>
   <button id="offerOpenChat" class="button chat-open hidden">Chat</button>
 </div>
 <div id="finalSection" class="hidden container-medium">
   <h2>Your Dashboard</h2>
-  <div id="wrapBrands" class="brand-tiles"></div>
-  <div id="summaryArea">
-    <p>Total ASK earned: <span id="totalAsk">0</span></p>
-    <p id="recentActivity"></p>
+  <div id="stats" class="dashboard">
+    <div class="stat">
+      <h4>Total ASK Earned</h4>
+      <p id="totalAsk">0</p>
+    </div>
+    <div class="stat">
+      <h4>Recent Activity</h4>
+      <p id="recentActivity"></p>
+    </div>
   </div>
+  <h3>Opted-in Brands</h3>
+  <div id="wrapBrands" class="brand-tiles"></div>
   <h3>Earn History</h3>
   <ul id="earnEvents"></ul>
   <div id="wrapMessages">
@@ -530,7 +550,7 @@ q('mainNext').onclick=()=>{
 // ----- User Onboarding -----
 const featuredBrand='Diaper Brand #1';
 const userConv=[
-  {ai:`Hey, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,user:"Not yet — just found out I'm expecting our first."},
+  {ai:`Welcome back, your data has earned you 1250 ASK since your last session, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,user:"Not yet — just found out I'm expecting our first."},
   {ai:"Omg, congrats! Anything you're nervous about?",user:"Everything. Budget's tight."},
   {ai:"You can verify your income to unlock personalized offers. Want to try?",user:null}
 ];
@@ -700,12 +720,10 @@ q('launchBtn').onclick = () => {
 };
 
 function showOfferSummary(txt){
-  const summaryMsg=document.createElement('p');
-  summaryMsg.className='ai';
-  summaryMsg.textContent=txt;
-  q('brandLog').appendChild(summaryMsg);
-  const rewardMatch=/(\d+\s*ASK\s*\+\s*\$\d+\s*off)/i.exec(txt);
-  const reward=rewardMatch?rewardMatch[1]:txt;
+  appendBrand('Good idea, adding a coupon. Can I increase your reward for a good fit?','ai');
+  appendBrand('Yes. We can go up to 2500 ASK for a verified match with our targeting.','user');
+  appendBrand('Perfect. Click below to go live.','ai');
+  const reward='2500 ASK + $5 off';
   const go=document.createElement('button');
   go.className='button';
   go.textContent='Go Live';
@@ -796,7 +814,7 @@ function showJoinOffer(){
     btn.remove();
     displayOfferSequence([
       "Nice. You're all set.",
-      "Oh btw \u2014 have you looked into baby food subscriptions yet? Happy to help you find one if you're interested."
+      "Oh btw \u2014 have you looked into baby food subscriptions yet? I know a brand that has big rewards for someone like you."
     ], () => { showOfferNext(); });
   };
   q('offerLog').appendChild(btn);
