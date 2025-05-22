@@ -40,7 +40,6 @@ input[type="file"]:focus-visible {
   margin-bottom: 10px;
 }
 #chat,
-#brandChat,
 .floating-chat {
   position: fixed;
   bottom: 20px;
@@ -79,17 +78,11 @@ input[type="file"]:focus-visible {
   width: 200px;
   margin-bottom: 20px;
 }
-#chatLog,
-#brandLog {
+#chatLog {
   display: flex;
   flex-direction: column;
 }
 
-#brandLog {
-  height: 266px;
-  overflow-y: auto;
-  margin-bottom: 10px;
-}
 
 .button {
   background: var(--color-primary);
