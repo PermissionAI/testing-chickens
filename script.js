@@ -5,13 +5,15 @@ const demo = params.get('demo');
 const scene = params.get('scene');
 
 const chatLog = q('chatLog');
-const chatInput = q('chatInput');
-const sendBtn = q('sendBtn');
+const nextBtn = q('nextBtn');
 const chatDiv = q('chat');
 const landing = q('landing');
 const dashboard = q('dashboard');
 const optInBtn = q('optInBtn');
 const featuredBrandEl = q('featuredBrand');
+const summaryDiv = q('summary');
+const finalOverlay = q('finalOverlay');
+const replayBtn = q('replayBtn');
 
 const brandNames = [
   'Bambino Diapers',
@@ -22,11 +24,20 @@ const brandNames = [
 ];
 const featuredBrand = brandNames[Math.floor(Math.random()*brandNames.length)];
 
-let step = 0;
-const script = [
-  `Hey, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,
-  "Omg, congrats 🎉 That's amazing. Totally get it — it's a lot all at once. Anything in particular you're feeling nervous about?",
-  "Makes total sense. If it helps — a lot of brands here offer extra support for growing families. You can verify your household income to unlock personalized offers. Want to give it a shot?"
+let pair = 0;
+const conversation = [
+  {
+    ai: `Hey, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,
+    user: "Not yet — just found out I’m expecting our first. Trying to get ahead of things but... kinda overwhelmed."
+  },
+  {
+    ai: "Omg, congrats 🎉 That’s amazing. Totally get it — it’s a lot all at once. Anything in particular you’re feeling nervous about?",
+    user: "Honestly? Just... everything. Budget’s tight. I’m just trying to get our ducks in a row."
+  },
+  {
+    ai: "Makes total sense. If it helps — a lot of brands here offer extra support for growing families. You can verify your household income to unlock personalized offers. Want to give it a shot?",
+    user: null
+  }
 ];
 
 function append(msg, cls){
@@ -35,37 +46,75 @@ function append(msg, cls){
   if(cls) p.className = cls;
   chatLog.appendChild(p);
   chatLog.scrollTop = chatLog.scrollHeight;
+  return p;
+}
+
+function displaySequence(msgs, done){
+  let i = 0;
+  function next(){
+    if(i < msgs.length){
+      const el = append(msgs[i], 'ai');
+      i++;
+      el.onclick = () => {
+        el.onclick = null;
+        next();
+      };
+    } else if(done){
+      done();
+    }
+  }
+  next();
 }
 
 function startChat(){
   landing.classList.add('hidden');
   chatDiv.classList.remove('hidden');
-  append(script[0], 'ai');
+  pair = 0;
+  append(conversation[0].ai, 'ai');
 }
 
-function handleSend(){
-  const val = chatInput.value.trim();
-  if(!val) return;
-  append(val, 'user');
-  chatInput.value = '';
-  if(step < script.length){
-    if(step === script.length - 1){
-      // last step, show verify option
-      append(script[step], 'ai');
-      const btn = document.createElement('button');
-      btn.className = 'button';
-      btn.textContent = 'Verify Now';
-      btn.onclick = () => {
-        const url = demo ? 'income.html?demo=1' : 'income.html';
-        location.href = url;
-      };
-      chatLog.appendChild(btn);
-    } else {
-      append(script[++step], 'ai');
+function showVerify(){
+  const btn = document.createElement('button');
+  btn.className = 'button';
+  btn.textContent = 'Verify Now';
+  btn.onclick = () => {
+    incomeModal.classList.remove('hidden');
+  };
+  chatLog.appendChild(btn);
+}
+
+function handleNext(){
+  const curr = conversation[pair];
+  if(curr.user){
+    append(curr.user, 'user');
+    pair++;
+    if(pair < conversation.length){
+      append(conversation[pair].ai, 'ai');
     }
-    step++;
+  } else {
+    showVerify();
+    pair++;
+    return;
+  }
+  if(pair === conversation.length - 1 && conversation[pair].user === null){
+    // Next click will show verify
   }
 }
+
+verifyCompleteBtn.onclick = () => {
+  incomeModal.classList.add('hidden');
+  append('Income verified! You earned', 'ai');
+  const badge = document.createElement('span');
+  badge.className = 'reward-badge';
+  badge.textContent = 'ASK';
+  chatLog.appendChild(badge);
+  chatLog.appendChild(document.createElement('br'));
+  sceneNextBtn.classList.remove('hidden');
+};
+
+sceneNextBtn.onclick = () => {
+  window.location.href = 'brand.html';
+};
 
 function updateDashboard(){
   const brandsDiv = q('brands');
@@ -74,9 +123,10 @@ function updateDashboard(){
   offersDiv.innerHTML = '<h3>Current Offers</h3>';
   const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
   brands.forEach(b => {
-    const p = document.createElement('p');
-    p.textContent = b;
-    brandsDiv.appendChild(p);
+    const div = document.createElement('div');
+    div.className = 'tile card';
+    div.textContent = b;
+    brandsDiv.appendChild(div);
   });
   const offers = JSON.parse(localStorage.getItem('offers') || '[]');
   offers.forEach(o => {
@@ -84,66 +134,78 @@ function updateDashboard(){
     p.textContent = o.brand + ': ' + o.reward;
     offersDiv.appendChild(p);
   });
+
+  if(summaryDiv){
+    const totalAsk = offers.reduce((sum, o) => {
+      const m = o.reward.match(/(\d+)\s*ASK/);
+      return m ? sum + parseInt(m[1]) : sum;
+    }, 0);
+    const recent = offers.slice(-3).map(o => o.brand + ': ' + o.reward).join('<br>');
+    summaryDiv.innerHTML = '<h3>Summary</h3>' +
+      `<p>Total ASK Earned: ${totalAsk}</p>` +
+      (recent ? `<p>Recent Activity:</p><p>${recent}</p>` : '');
+  }
 }
 
 function checkOffers(){
   const notified = sessionStorage.getItem('notified');
   const offers = JSON.parse(localStorage.getItem('offers') || '[]');
   if(!notified && offers.length){
-    append('Hey, just got some good news —', 'ai');
     const o = offers[offers.length-1];
-    append(o.brand + ' launched a new offer made for new parents like you. Includes ' + o.reward + '. Want to check it out?', 'ai');
-    const btn = document.createElement('button');
-    btn.className = 'button';
-    btn.textContent = 'Yes, please';
-    btn.onclick = () => {
-      const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
-      if(!brands.includes(o.brand)) brands.push(o.brand);
-      localStorage.setItem('optedInBrands', JSON.stringify(brands));
-      updateDashboard();
-      append('Nice. You\'re all set. Oh btw — have you looked into baby food subscriptions yet? Happy to help you find one if you\'re interested.', 'ai');
-    };
-    chatLog.appendChild(btn);
+    const msgs = [
+      'Hey, just got some good news —',
+      'Diaper Brand 2 launched a new offer made for new parents like you.',
+      'Includes ' + o.reward + '. Want to check it out?'
+    ];
     sessionStorage.setItem('notified', '1');
+    displaySequence(msgs, () => {
+      const btn = document.createElement('button');
+      btn.className = 'button';
+      btn.textContent = 'Yes, please';
+      btn.onclick = () => {
+        const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
+        if(!brands.includes(o.brand)) brands.push(o.brand);
+        localStorage.setItem('optedInBrands', JSON.stringify(brands));
+        updateDashboard();
+        displaySequence([
+          "Nice. You're all set.",
+          "Oh btw — have you looked into baby food subscriptions yet? Happy to help you find one if you're interested."
+        ], () => {
+          const next = q('nextBtn');
+          if(next) next.classList.remove('hidden');
+        });
+      };
+      chatLog.appendChild(btn);
+    });
   }
 }
 
 function autoDemo(){
-  const messages = ['No', 'Just getting started', 'Sure'];
   optInBtn.click();
-  let i = 0;
   function sendNext(){
-    if(i < messages.length){
-      chatInput.value = messages[i];
-      handleSend();
-      i++;
+    if(pair < conversation.length){
+      handleNext();
       setTimeout(sendNext, 500);
     } else {
-      setTimeout(() => {
-        const btn = chatLog.querySelector('button');
-        if(btn) btn.click();
-      }, 500);
+      const btn = chatLog.querySelector('button');
+      if(btn) btn.click();
     }
   }
   setTimeout(sendNext, 500);
 }
 
 function guidedDemo(){
-  const messages = ['No', 'Just getting started', 'Sure'];
   optInBtn.click();
-  let i = 0;
-  chatInput.value = messages[i];
-  sendBtn.addEventListener('click', () => {
-    i++;
-    if(i < messages.length){
-      setTimeout(() => { chatInput.value = messages[i]; }, 100);
-    } else {
-      setTimeout(() => {
-        const btn = chatLog.querySelector('button');
-        if(btn) btn.click();
-      }, 500);
+  nextBtn.addEventListener('click', () => {
+    if(pair < conversation.length){
+      // prefill is implicit; just advance
+      setTimeout(() => {}, 0);
     }
   });
+}
+
+function showFinalOverlay(){
+  if(finalOverlay) finalOverlay.classList.remove('hidden');
 }
 
 optInBtn.onclick = () => {
@@ -156,16 +218,26 @@ optInBtn.onclick = () => {
   updateDashboard();
 };
 
-sendBtn.onclick = handleSend;
+nextBtn.onclick = handleNext;
+
+if(replayBtn){
+  replayBtn.onclick = () => {
+    window.location.href = 'index.html';
+  };
+}
 
 window.onload = function(){
   if(featuredBrandEl) featuredBrandEl.textContent = featuredBrand;
   updateDashboard();
   setInterval(checkOffers, 3000);
-  if(scene === 'final' && demo){
-    startChat();
-  }
-  if(demo && scene !== 'final'){
-    setTimeout(guidedDemo, 500);
+  if(scene === 'final'){
+    landing.classList.add('hidden');
+    chatDiv.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    showFinalOverlay();
+  } else {
+    if(demo){
+      setTimeout(guidedDemo, 500);
+    }
   }
 };

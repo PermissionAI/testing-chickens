@@ -11,21 +11,44 @@
     <h2>Featured Offer</h2>
       <div class="tile card">
         <p id="featuredBrand"></p>
+        <p class="callout">Exclusive Deals</p>
         <button id="optInBtn" class="button">Opt-In</button>
       </div>
   </div>
 
-  <div id="chat" class="hidden container-medium">
+  <div id="chat" class="hidden chat-overlay">
     <div id="chatLog"></div>
-    <input type="text" id="chatInput" placeholder="Type here...">
-    <button id="sendBtn" class="button">Send</button>
+    <button id="nextBtn" class="button">Next</button>
   </div>
+
+  <div id="incomeModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <h2>Income Verification</h2>
+      <p>This is a placeholder for a secure third-party verification flow.</p>
+      <button id="verifyCompleteBtn" class="button">Complete Verification</button>
+    </div>
+  </div>
+
+  <button id="sceneNextBtn" class="button hidden">Next</button>
 
   <div id="dashboard" class="hidden container-medium">
     <h2>Your Dashboard</h2>
+    <div id="summary"></div>
     <div id="brands"></div>
     <div id="offers"></div>
   </div>
+
+  <div id="finalOverlay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <p class="heading-style-h4">It’s not ads.</p>
+      <p class="heading-style-h4">It’s not spam.</p>
+      <p class="heading-style-h4">It’s your life — supported.</p>
+      <p>Come for the rewards. Stay for the brands that get you.</p>
+      <p><strong>Permission x Google – Zero-party data. Trusted by users. Powered by AI.</strong></p>
+      <button id="replayBtn" class="button">Replay Demo</button>
+    </div>
+  </div>
+
 
   <script src="script.js"></script>
 </body>

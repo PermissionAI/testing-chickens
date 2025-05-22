@@ -12,7 +12,28 @@
     <input type="text" id="brandInput" placeholder="Type here...">
     <button id="brandSend" class="button">Send</button>
   </div>
-
+  <div id="wizard" class="hidden container-medium">
+    <div id="step1" class="step">
+      <h2>Define Audience</h2>
+      <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
+      <button id="step1Next" class="button">Next</button>
+    </div>
+    <div id="step2" class="step hidden">
+      <h2>Generate Creative & Copy</h2>
+      <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
+      <p><strong>Body:</strong> <span id="adCopy"></span></p>
+      <button id="step2Next" class="button">Next</button>
+    </div>
+    <div id="step3" class="step hidden">
+      <h2>Preview Ad</h2>
+      <div class="tile card">
+        <h3 id="previewHeadline"></h3>
+        <p id="previewBody"></p>
+      </div>
+      <button id="launchBtn" class="button">Launch Campaign</button>
+    </div>
+  </div>
+  <div id="summary" class="hidden container-medium"></div>
   <script>
   const params = new URLSearchParams(window.location.search);
   const demo = params.get('demo');
@@ -20,105 +41,134 @@
   const log = document.getElementById('brandLog');
   const input = document.getElementById('brandInput');
   const send = document.getElementById('brandSend');
-  const brandNames = [
-    'Bambino Diapers',
-    'Happy Tush',
-    'SnugBug',
-    'EcoBaby',
-    'SoftCare'
-  ];
+  const wizard = document.getElementById('wizard');
+  const step1Next = document.getElementById('step1Next');
+  const step2Next = document.getElementById('step2Next');
+  const launchBtn = document.getElementById('launchBtn');
+  const audienceInput = document.getElementById('audienceInput');
+  const adHeadlineEl = document.getElementById('adHeadline');
+  const adCopyEl = document.getElementById('adCopy');
+  const previewHeadline = document.getElementById('previewHeadline');
+  const previewBody = document.getElementById('previewBody');
+  const summary = document.getElementById('summary');
+
+  const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
   const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
   let bstep = 0;
+  let awaitingOffer = false;
   const script = [
     'Welcome back. Who are you hoping to connect with today?',
-    "Got it. Let's build your audience. We'll use Google targeting + Permission signals. Want to include your CRM list?",
-    'Great. Add your creative and preview the ad. When ready click Launch Campaign.'
+    "Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?"
   ];
-  function append(m){
+
+  function append(m, cls){
     const p = document.createElement('p');
     p.textContent = m;
+    if(cls) p.className = cls;
     log.appendChild(p);
     log.scrollTop = log.scrollHeight;
   }
+
+  function showWizard(){
+    wizard.classList.remove('hidden');
+  }
+
   function next(){
     if(bstep < script.length){
-      append(script[bstep]);
+      append(script[bstep], 'ai');
       bstep++;
-    } else if(bstep === script.length){
-        const btn = document.createElement('button');
-        btn.className = 'button';
-        btn.textContent = 'Launch Campaign';
-      btn.onclick = () => {
-        append('Want to reach families already on Permission too? You can offer them a reward to join you.');
-        const go = document.createElement('button');
-        go.className = 'button';
-        go.textContent = 'Go Live';
-        go.onclick = () => {
-          const offers = JSON.parse(localStorage.getItem('offers') || '[]');
-          offers.push({brand: brand, reward:'800 ASK + $5 off'});
-          localStorage.setItem('offers', JSON.stringify(offers));
-          append('Campaign live!');
-          if(demo){
-            setTimeout(() => {
-              window.location.href = 'index.html?demo=1&scene=final';
-            }, 1000);
-          }
-        };
-        log.appendChild(document.createElement('br')); 
-        log.appendChild(go);
-      };
-      log.appendChild(btn);
-      bstep++;
-    }
-  }
-  send.onclick = () => {
-    append(input.value);
-    input.value='';
-    next();
-  };
-  function autoDemo(){
-    const msgs = ['Parents in Phoenix', 'Yes', 'All set'];
-    let i = 0;
-    function sendNext(){
-      if(i < msgs.length){
-        input.value = msgs[i];
-        send.click();
-        i++;
-        setTimeout(sendNext, 500);
-      } else {
-        setTimeout(() => {
-          const launch = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Launch Campaign');
-          if(launch) launch.click();
-          setTimeout(() => {
-            const go = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Go Live');
-            if(go) go.click();
-          }, 500);
-        }, 500);
+      if(bstep === script.length){
+        showWizard();
       }
     }
-    sendNext();
+  }
+
+  send.onclick = () => {
+    const val = input.value.trim();
+    if(!val) return;
+    append(val, 'user');
+    input.value='';
+    if(awaitingOffer){
+      showOfferSummary(val);
+      awaitingOffer = false;
+    } else {
+      next();
+    }
+  };
+
+  function generateCreative(){
+    const head = 'Welcome New Parents!';
+    const body = 'Save on essentials for your growing family with ' + brand + '.';
+    adHeadlineEl.textContent = head;
+    adCopyEl.textContent = body;
+    previewHeadline.textContent = head;
+    previewBody.textContent = body;
+  }
+
+  step1Next.onclick = () => {
+    document.getElementById('step1').classList.add('hidden');
+    generateCreative();
+    document.getElementById('step2').classList.remove('hidden');
+  };
+
+  step2Next.onclick = () => {
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step3').classList.remove('hidden');
+  };
+
+  launchBtn.onclick = () => {
+    document.getElementById('step3').classList.add('hidden');
+    wizard.classList.add('hidden');
+    append('Want to reach families already on Permission too? You can offer them a reward to join you.', 'ai');
+    awaitingOffer = true;
+  };
+
+  function showOfferSummary(txt){
+    summary.innerHTML = '<p>' + txt + '</p>';
+    const go = document.createElement('button');
+    go.className = 'button';
+    go.textContent = 'Go Live';
+    go.onclick = () => {
+      const offers = JSON.parse(localStorage.getItem('offers') || '[]');
+      offers.push({brand: brand, reward: txt});
+      localStorage.setItem('offers', JSON.stringify(offers));
+      summary.innerHTML = '<p>Campaign live!</p>';
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'button';
+      nextBtn.textContent = 'Next';
+      nextBtn.onclick = () => {
+        const url = demo ? 'index.html?demo=1&scene=final' : 'index.html?scene=final';
+        window.location.href = url;
+      };
+      summary.appendChild(nextBtn);
+    };
+    summary.appendChild(go);
+    summary.classList.remove('hidden');
   }
 
   function guidedDemo(){
-    const msgs = ['Parents in Phoenix', 'Yes', 'All set'];
+    const msgs = ['New parents. Ideally household income over 100k. First-time families.', 'Yes — let\u2019s offer 800 ASK + $5 off.'];
     let i = 0;
     input.value = msgs[i];
     send.onclick = () => {
-      append(input.value);
+      const val = input.value.trim();
+      if(!val) return;
+      append(val, 'user');
       input.value='';
-      next();
+      if(awaitingOffer){
+        showOfferSummary(val);
+        awaitingOffer = false;
+      } else {
+        next();
+        if(i === 0){
+          setTimeout(() => step1Next.click(), 300);
+          setTimeout(() => step2Next.click(), 600);
+          setTimeout(() => launchBtn.click(), 900);
+        }
+      }
       i++;
       if(i < msgs.length){
         setTimeout(() => { input.value = msgs[i]; }, 100);
-      } else {
-        setTimeout(() => {
-          const launch = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Launch Campaign');
-          if(launch) launch.click();
-          setTimeout(() => {
-            const go = Array.from(log.getElementsByTagName('button')).find(b => b.textContent === 'Go Live');
-            if(go) go.click();
-          }, 500);
-        }, 500);
       }
     };
   }
