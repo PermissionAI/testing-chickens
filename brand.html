@@ -14,8 +14,7 @@
       <button id="minBrandChatBtn">&#8211;</button>
     </div>
     <div id="brandLog" class="chat-box"></div>
-    <input type="text" id="brandInput" placeholder="Type here...">
-    <button id="brandSend" class="button">Send</button>
+    <button id="brandNext" class="button">Next</button>
   </div>
   <button id="openBrandChatBtn" class="button chat-open hidden">Chat</button>
   <div id="wizard" class="hidden container-medium">
@@ -53,8 +52,7 @@
   const demo = params.get('demo');
 
   const log = document.getElementById('brandLog');
-  const input = document.getElementById('brandInput');
-  const send = document.getElementById('brandSend');
+  const brandNext = document.getElementById('brandNext');
   const wizard = document.getElementById('wizard');
   const step1Next = document.getElementById('step1Next');
   const step2Next = document.getElementById('step2Next');
@@ -67,14 +65,25 @@
   const summary = document.getElementById('summary');
   const minBrandChatBtn = document.getElementById('minBrandChatBtn');
   const openBrandChatBtn = document.getElementById('openBrandChatBtn');
+  brandNext.onclick = handleNext;
 
   const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
   const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
-  let bstep = 0;
-  let awaitingOffer = false;
-  const script = [
-    'Welcome back. Who are you hoping to connect with today?',
-    "Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?"
+  let pair = 0;
+  let expecting = 'user';
+  const conversation = [
+    {
+      ai: 'Welcome back. Who are you hoping to connect with today?',
+      user: 'New parents. Ideally household income over 100k. First-time families.'
+    },
+    {
+      ai: 'Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?',
+      user: null
+    },
+    {
+      ai: 'Want to reach families already on Permission too? You can offer them a reward to join you.',
+      user: 'Yes \u2014 let\u2019s offer 800 ASK + $5 off.'
+    }
   ];
 
   function append(m, cls){
@@ -89,28 +98,28 @@
     wizard.classList.remove('hidden');
   }
 
-  function next(){
-    if(bstep < script.length){
-      append(script[bstep], 'ai');
-      bstep++;
-      if(bstep === script.length){
+  function handleNext(){
+    if(pair >= conversation.length) return;
+    const curr = conversation[pair];
+    if(expecting === 'user'){
+      if(curr.user){
+        append(curr.user, 'user');
+        pair++;
+        if(pair === conversation.length){
+          showOfferSummary(curr.user);
+        }
+        expecting = 'ai';
+      } else {
         showWizard();
+        pair++;
+        expecting = 'ai';
       }
+    } else {
+      append(curr.ai, 'ai');
+      expecting = 'user';
     }
   }
 
-  send.onclick = () => {
-    const val = input.value.trim();
-    if(!val) return;
-    append(val, 'user');
-    input.value='';
-    if(awaitingOffer){
-      showOfferSummary(val);
-      awaitingOffer = false;
-    } else {
-      next();
-    }
-  };
 
   function generateCreative(){
     const head = 'Welcome New Parents!';
@@ -135,8 +144,7 @@
   launchBtn.onclick = () => {
     document.getElementById('step3').classList.add('hidden');
     wizard.classList.add('hidden');
-    append('Want to reach families already on Permission too? You can offer them a reward to join you.', 'ai');
-    awaitingOffer = true;
+    handleNext();
   };
 
   function showOfferSummary(txt){
@@ -177,34 +185,27 @@
   }
 
   function guidedDemo(){
-    const msgs = ['New parents. Ideally household income over 100k. First-time families.', 'Yes — let\u2019s offer 800 ASK + $5 off.'];
+    const actions = [
+      () => brandNext.click(),
+      () => brandNext.click(),
+      () => brandNext.click(),
+      () => step1Next.click(),
+      () => step2Next.click(),
+      () => launchBtn.click(),
+      () => brandNext.click()
+    ];
     let i = 0;
-    input.value = msgs[i];
-    send.onclick = () => {
-      const val = input.value.trim();
-      if(!val) return;
-      append(val, 'user');
-      input.value='';
-      if(awaitingOffer){
-        showOfferSummary(val);
-        awaitingOffer = false;
-      } else {
-        next();
-        if(i === 0){
-          setTimeout(() => step1Next.click(), 300);
-          setTimeout(() => step2Next.click(), 600);
-          setTimeout(() => launchBtn.click(), 900);
-        }
+    function run(){
+      if(i < actions.length){
+        actions[i++]();
+        setTimeout(run, 400);
       }
-      i++;
-      if(i < msgs.length){
-        setTimeout(() => { input.value = msgs[i]; }, 100);
-      }
-    };
+    }
+    run();
   }
 
   window.onload = () => {
-    next();
+    append(conversation[0].ai, 'ai');
     if(demo){
       setTimeout(guidedDemo, 500);
     }
