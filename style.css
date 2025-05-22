@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
+  margin: 20px auto;
+  max-width: 960px;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -33,6 +34,17 @@ input[type="file"]:focus-visible {
   height: 200px;
   overflow-y: auto;
   margin-bottom: 10px;
+}
+#chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  max-width: 90%;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 10px;
 }
 .tile {
   border: 1px solid #ccc;
