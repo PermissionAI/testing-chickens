@@ -58,6 +58,8 @@ input[type="file"]:focus-visible {
   margin-bottom: 10px;
 }
 #chat,
+#brandChat,
+#offerChat,
 .floating-chat {
   position: fixed;
   bottom: 20px;
@@ -147,6 +149,13 @@ input[type="file"]:focus-visible {
   bottom: 20px;
   right: 20px;
   z-index: 1000;
+}
+
+.scene-next {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .preview-ad {
@@ -348,7 +357,7 @@ input[type="file"]:focus-visible {
       <button id="verifyCompleteBtn" class="button">Complete Verification</button>
     </div>
   </div>
-  <button id="sceneNextBtn" class="button hidden">Next</button>
+  <button id="sceneNextBtn" class="button scene-next hidden">Next</button>
 </div>
 <div id="brandSection" class="hidden">
   <h2>Permission Brand Portal</h2>
@@ -393,6 +402,17 @@ input[type="file"]:focus-visible {
   <button id="brandOpenChat" class="button chat-open hidden">Chat</button>
   <div id="brandSummary" class="hidden container-medium"></div>
 </div>
+<div id="offerSection" class="hidden">
+  <div id="offerChat" class="chat-box">
+    <div class="chat-header">
+      <span>Chat</span>
+      <button id="offerMinChat">&#8211;</button>
+    </div>
+    <div id="offerLog" class="chat-box" role="log" aria-live="polite"></div>
+    <button id="offerNextBtn" class="button scene-next hidden">Next</button>
+  </div>
+  <button id="offerOpenChat" class="button chat-open hidden">Chat</button>
+</div>
 <div id="finalSection" class="hidden container-medium">
   <h2>Your Dashboard</h2>
   <div id="wrapBrands" class="brand-tiles"></div>
@@ -409,7 +429,7 @@ input[type="file"]:focus-visible {
   <p id="branding"><strong>Permission x Google – Zero-party data. Trusted by users. Powered by AI.</strong></p>
   <button id="restartBtn" class="button">Replay Demo</button>
 </div>
-<button id="mainNext" class="button">Next</button>
+<button id="mainNext" class="button scene-next">Next</button>
 <script>
 function q(id){return document.getElementById(id);}
 
@@ -417,7 +437,8 @@ const scenes=[
   {id:'introSection',title:'Intro'},
   {id:'userSection',title:'Scene 1 - User Onboarding'},
   {id:'brandSection',title:'Scene 2 - Brand Portal'},
-  {id:'finalSection',title:'Scene 3 - Wrap Up'}
+  {id:'offerSection',title:'Scene 3 - Offer Notification'},
+  {id:'finalSection',title:'Scene 4 - Wrap Up'}
 ];
 let sceneIndex=0;
 let userActionBtn=null;
@@ -452,8 +473,10 @@ function showWrapUp(){
   if(q('chat')) q('chat').classList.add('hidden');
   if(q('brandChat')) q('brandChat').classList.add('hidden');
   if(q('brandOpenChat')) q('brandOpenChat').classList.add('hidden');
+  if(q('offerChat')) q('offerChat').classList.add('hidden');
+  if(q('offerOpenChat')) q('offerOpenChat').classList.add('hidden');
   updateWrapUp();
-  showScene(3);
+  showScene(4);
 }
 
 function showScene(i){
@@ -471,11 +494,16 @@ function showScene(i){
     hideBrandNext();
   }
   if(i===3){
+    startOffer();
+  }
+  if(i===4){
     updateWrapUp();
     document.body.classList.add('scene-final');
   } else {
     document.body.classList.remove('scene-final');
   }
+  if(i===0) q('mainNext').classList.remove('hidden');
+  else q('mainNext').classList.add('hidden');
 }
 
 q('mainNext').onclick=()=>{
@@ -672,7 +700,7 @@ function showOfferSummary(txt){
     localStorage.setItem('offers', JSON.stringify(offers));
     summary.innerHTML = '<p>Campaign live!</p>';
     const nextBtn = document.createElement('button');
-    nextBtn.className = 'button';
+    nextBtn.className = 'button scene-next';
     nextBtn.textContent = 'Next';
     nextBtn.onclick = () => {
       showScene(3);
@@ -696,6 +724,82 @@ if(q('brandOpenChat')){
   q('brandOpenChat').onclick = () => {
     q('brandChat').classList.remove('hidden');
     q('brandOpenChat').classList.add('hidden');
+  };
+}
+
+// ----- Offer Notification -----
+let offerIdx = 0;
+const offerMsgs = [
+  'Hey, just got some good news \u2014',
+  'Diaper Brand 2 launched a new offer made for new parents like you.',
+  'You\u2019ve unlocked a special bonus from them \u2014 800 ASK + $5 off \u2014 because you seem like a perfect match. Want to join?'
+];
+
+function hideOfferNext(){ q('offerNextBtn').classList.add('hidden'); }
+
+function appendOffer(msg){
+  const p = document.createElement('p');
+  p.className = 'ai';
+  p.textContent = msg;
+  p.onclick = () => { p.onclick = null; offerIdx++; if(offerIdx < offerMsgs.length){ appendOffer(offerMsgs[offerIdx]); } else { showJoinOffer(); } };
+  q('offerLog').appendChild(p);
+  q('offerLog').scrollTop = q('offerLog').scrollHeight;
+}
+
+function displayOfferSequence(arr, done){
+  let i = 0;
+  function next(){
+    if(i < arr.length){
+      const el = document.createElement('p');
+      el.className = 'ai';
+      el.textContent = arr[i];
+      q('offerLog').appendChild(el);
+      q('offerLog').scrollTop = q('offerLog').scrollHeight;
+      i++;
+      el.onclick = () => { el.onclick = null; next(); };
+    } else if(done){
+      done();
+    }
+  }
+  next();
+}
+
+function showJoinOffer(){
+  const btn = document.createElement('button');
+  btn.className = 'button';
+  btn.textContent = 'Join Offer';
+  btn.onclick = () => {
+    btn.remove();
+    displayOfferSequence([
+      "Nice. You're all set.",
+      "Oh btw \u2014 have you looked into baby food subscriptions yet? Happy to help you find one if you're interested."
+    ], () => { q('offerNextBtn').classList.remove('hidden'); });
+  };
+  q('offerLog').appendChild(btn);
+}
+
+function startOffer(){
+  hideOfferNext();
+  q('offerLog').innerHTML = '';
+  offerIdx = 0;
+  q('offerChat').classList.remove('hidden');
+  if(q('offerOpenChat')) q('offerOpenChat').classList.add('hidden');
+  appendOffer(offerMsgs[0]);
+}
+
+q('offerNextBtn').onclick = () => showScene(4);
+
+if(q('offerMinChat')){
+  q('offerMinChat').onclick = () => {
+    q('offerChat').classList.add('hidden');
+    if(q('offerOpenChat')) q('offerOpenChat').classList.remove('hidden');
+  };
+}
+
+if(q('offerOpenChat')){
+  q('offerOpenChat').onclick = () => {
+    q('offerChat').classList.remove('hidden');
+    q('offerOpenChat').classList.add('hidden');
   };
 }
 
