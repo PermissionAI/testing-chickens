@@ -45,7 +45,6 @@
         <button id="launchBtn" class="button">Launch Campaign</button>
       </div>
     </div>
-    <button id="nextBtn" class="button">Next</button>
   </div>
   <button id="openChatBtn" class="button chat-open hidden">Chat</button>
   <div id="summary" class="hidden container-medium"></div>
@@ -54,7 +53,6 @@
   const demo = params.get('demo');
 
   const log = document.getElementById('chatLog');
-  const nextBtn = document.getElementById('nextBtn');
   const wizard = document.getElementById('wizard');
   const step1Next = document.getElementById('step1Next');
   const step2Next = document.getElementById('step2Next');
@@ -67,26 +65,15 @@
   const summary = document.getElementById('summary');
   const minChatBtn = document.getElementById('minChatBtn');
   const openChatBtn = document.getElementById('openChatBtn');
-  nextBtn.onclick = handleNext;
 
   const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
   const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
-  let pair = 0;
-  let expecting = 'user';
-  const conversation = [
-    {
-      ai: 'Welcome back. Who are you hoping to connect with today?',
-      user: 'New parents. Ideally household income over 100k. First-time families.'
-    },
-    {
-      ai: 'Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?',
-      user: null
-    },
-    {
-      ai: 'Want to reach families already on Permission too? You can offer them a reward to join you.',
-      user: 'Yes \u2014 let\u2019s offer 800 ASK + $5 off.'
-    }
-  ];
+  const conversation = {
+    welcome: 'Welcome back. Who are you hoping to connect with today?',
+    confirm: 'Got it. Let\u2019s build your audience. We\u2019ll use Google targeting + Permission signals. Want to include your CRM list?',
+    askReward: 'Want to reach families already on Permission too? You can offer them a reward to join you.',
+    userReward: 'Yes \u2014 let\u2019s offer 800 ASK + $5 off.'
+  };
 
   function append(m, cls){
     const p = document.createElement('p');
@@ -100,42 +87,6 @@
     wizard.classList.remove('hidden');
   }
 
-  function showWizardButton(){
-    const btn = document.createElement('button');
-    btn.className = 'button';
-    btn.textContent = 'Open Builder';
-    btn.onclick = () => {
-      btn.remove();
-      showWizard();
-      pair++;
-      expecting = 'ai';
-    };
-    log.appendChild(btn);
-  }
-
-  function handleNext(){
-    if(pair >= conversation.length) return;
-    const curr = conversation[pair];
-    if(expecting === 'user'){
-      if(curr.user){
-        append(curr.user, 'user');
-        pair++;
-        if(pair === conversation.length){
-          showOfferSummary(curr.user);
-        }
-        expecting = 'ai';
-      } else {
-        // waiting for wizard button
-      }
-    } else {
-      append(curr.ai, 'ai');
-      expecting = 'user';
-      if(pair === 1){
-        showWizardButton();
-      }
-    }
-  }
-
 
   function generateCreative(){
     const head = 'Welcome New Parents!';
@@ -147,21 +98,25 @@
   }
 
   step1Next.onclick = () => {
+    const audienceText = audienceInput.value;
+    append(audienceText, 'user');
     document.getElementById('step1').classList.add('hidden');
     generateCreative();
     document.getElementById('step2').classList.remove('hidden');
-    handleNext();
+    append(conversation.confirm, 'ai');
   };
 
   step2Next.onclick = () => {
     document.getElementById('step2').classList.add('hidden');
     document.getElementById('step3').classList.remove('hidden');
+    append(conversation.askReward, 'ai');
   };
 
   launchBtn.onclick = () => {
     document.getElementById('step3').classList.add('hidden');
     wizard.classList.add('hidden');
-    handleNext();
+    append(conversation.userReward, 'user');
+    showOfferSummary(conversation.userReward);
   };
 
   function showOfferSummary(txt){
@@ -203,13 +158,9 @@
 
   function guidedDemo(){
     const actions = [
-      () => nextBtn.click(),
-      () => nextBtn.click(),
-      () => nextBtn.click(),
       () => step1Next.click(),
       () => step2Next.click(),
-      () => launchBtn.click(),
-      () => nextBtn.click()
+      () => launchBtn.click()
     ];
     let i = 0;
     function run(){
@@ -222,7 +173,8 @@
   }
 
   window.onload = () => {
-    append(conversation[0].ai, 'ai');
+    append(conversation.welcome, 'ai');
+    showWizard();
     if(demo){
       setTimeout(guidedDemo, 500);
     }
