@@ -12,6 +12,7 @@ const landing = q('landing');
 const dashboard = q('dashboard');
 const optInBtn = q('optInBtn');
 const featuredBrandEl = q('featuredBrand');
+const nextBtn = q('nextBtn');
 
 const brandNames = [
   'Bambino Diapers',
@@ -35,6 +36,24 @@ function append(msg, cls){
   if(cls) p.className = cls;
   chatLog.appendChild(p);
   chatLog.scrollTop = chatLog.scrollHeight;
+  return p;
+}
+
+function displaySequence(msgs, done){
+  let i = 0;
+  function next(){
+    if(i < msgs.length){
+      const el = append(msgs[i], 'ai');
+      i++;
+      el.onclick = () => {
+        el.onclick = null;
+        next();
+      };
+    } else if(done){
+      done();
+    }
+  }
+  next();
 }
 
 function startChat(){
@@ -90,21 +109,32 @@ function checkOffers(){
   const notified = sessionStorage.getItem('notified');
   const offers = JSON.parse(localStorage.getItem('offers') || '[]');
   if(!notified && offers.length){
-    append('Hey, just got some good news —', 'ai');
     const o = offers[offers.length-1];
-    append(o.brand + ' launched a new offer made for new parents like you. Includes ' + o.reward + '. Want to check it out?', 'ai');
-    const btn = document.createElement('button');
-    btn.className = 'button';
-    btn.textContent = 'Yes, please';
-    btn.onclick = () => {
-      const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
-      if(!brands.includes(o.brand)) brands.push(o.brand);
-      localStorage.setItem('optedInBrands', JSON.stringify(brands));
-      updateDashboard();
-      append('Nice. You\'re all set. Oh btw — have you looked into baby food subscriptions yet? Happy to help you find one if you\'re interested.', 'ai');
-    };
-    chatLog.appendChild(btn);
+    const msgs = [
+      'Hey, just got some good news —',
+      'Diaper Brand 2 launched a new offer made for new parents like you.',
+      'Includes ' + o.reward + '. Want to check it out?'
+    ];
     sessionStorage.setItem('notified', '1');
+    displaySequence(msgs, () => {
+      const btn = document.createElement('button');
+      btn.className = 'button';
+      btn.textContent = 'Yes, please';
+      btn.onclick = () => {
+        const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
+        if(!brands.includes(o.brand)) brands.push(o.brand);
+        localStorage.setItem('optedInBrands', JSON.stringify(brands));
+        updateDashboard();
+        displaySequence([
+          "Nice. You're all set.",
+          "Oh btw — have you looked into baby food subscriptions yet? Happy to help you find one if you're interested."
+        ], () => {
+          const next = q('nextBtn');
+          if(next) next.classList.remove('hidden');
+        });
+      };
+      chatLog.appendChild(btn);
+    });
   }
 }
 
