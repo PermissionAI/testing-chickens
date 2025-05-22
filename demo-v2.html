@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Hell Yeah v2</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+  <style>
+:root {
+  --color-primary: #1A73E8;
+}
+
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  margin: 20px auto;
+  max-width: 960px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+*[tabindex]:focus-visible,
+input[type="file"]:focus-visible {
+  outline: 0.125rem solid #1558B0;
+  outline-offset: 0.125rem;
+}
+
+.container-medium,
+.container-large {
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+.margin-0 {
+  margin: 0rem !important;
+}
+
+.padding-0 {
+  padding: 0rem !important;
+}
+.hidden {
+  display: none;
+}
+#chatLog {
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 266px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+#chat,
+.floating-chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px;
+  max-width: 90%;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+.tile {
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 200px;
+  margin-bottom: 20px;
+}
+#chatLog {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.button {
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border-radius: 8px;
+  padding: 16px 32px;
+  border: none;
+  cursor: pointer;
+}
+
+/* keep chat buttons compact */
+.chat-box .button {
+  padding: 12px 24px;
+}
+
+.button:hover {
+  background: #1558B0;
+}
+
+.text-align-center {
+  text-align: center;
+}
+
+.heading-style-h4 {
+  font-size: 24px;
+}
+
+.text-size-medium {
+  font-size: 16px;
+}
+
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.chat-open {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.preview-ad {
+  margin: 0 auto;
+}
+
+.border-radius-md {
+  border-radius: 12px;
+}
+
+.image-responsive {
+  width: 100%;
+  height: auto;
+}
+
+.social_link-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.nav-link {
+  color: #FFFFFF;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+
+
+.modal-content {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-link {
+  color: #6B7280;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--color-primary);
+}
+
+.chat-box {
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+}
+
+.callout {
+  font-size: 14px;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.reward-badge {
+  background: gold;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+.ai,
+.user {
+  margin: 5px 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 75%;
+  line-height: 1.4;
+}
+
+.ai {
+  background: #f1f0f0;
+  align-self: flex-start;
+}
+
+.user {
+  background: #dcf8c6;
+  align-self: flex-end;
+}
+
+
+.step { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
+
+.placeholder-img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Wrap-up scene styles */
+#wrapUpScene {
+  margin-top: 20px;
+}
+
+.brand-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.overlay-text {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+#branding {
+  margin-top: 20px;
+}
+
+/* Intro and transition styles */
+.intro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.intro h1 {
+  animation: fadeInUp 1s ease forwards;
+}
+
+.fade {
+  transition: opacity 0.5s ease;
+}
+
+.fade-hidden {
+  opacity: 0;
+}
+
+</style>
+</head>
+<body class="container-medium text-align-center">
+<h1>Project Hell Yeah Demo v2</h1>
+<h2 id="sceneTitle"></h2>
+<div id="introSection">
+  <p>Zero party data meets trusted AI. Click Next to begin.</p>
+</div>
+<div id="userSection" class="hidden">
+  <h2>Permission Marketplace</h2>
+  <div id="landing" class="container-medium">
+    <h3>Featured Offer</h3>
+    <div class="tile card">
+      <p id="featuredBrand"></p>
+      <p class="callout">Exclusive Deals</p>
+      <button id="optInBtn" class="button">Opt-In</button>
+    </div>
+  </div>
+  <div id="chat" class="hidden chat-box">
+    <div class="chat-header">
+      <span>Chat</span>
+      <button id="minChatBtn">&#8211;</button>
+    </div>
+    <div id="chatLog" class="chat-box" role="log" aria-live="polite"></div>
+    <button id="nextBtn" class="button">Next</button>
+  </div>
+  <div id="incomeModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <h2>Income Verification</h2>
+      <p>This is a placeholder for a secure third-party verification flow.</p>
+      <button id="verifyCompleteBtn" class="button">Complete Verification</button>
+    </div>
+  </div>
+  <button id="sceneNextBtn" class="button hidden">Next</button>
+</div>
+<div id="brandSection" class="hidden">
+  <h2>Permission Brand Portal</h2>
+  <div id="brandChat" class="chat-box">
+    <div class="chat-header">
+      <span>Chat</span>
+      <button id="brandMinChat">&#8211;</button>
+    </div>
+    <div id="brandLog" class="chat-box" role="log" aria-live="polite"></div>
+    <div id="wizard" class="hidden container-medium">
+      <div id="step1" class="step">
+        <h3>Define Audience</h3>
+        <label for="audienceInput">Audience description</label>
+        <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
+        <button id="step1Next" class="button">Next</button>
+      </div>
+      <div id="step2" class="step hidden">
+        <h3>Generate Creative & Copy</h3>
+        <img id="creativeImg" class="placeholder-img" src="https://via.placeholder.com/300x150" alt="Ad creative preview">
+        <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
+        <p><strong>Body:</strong> <span id="adCopy"></span></p>
+        <label>Format:
+          <select id="formatSelect">
+            <option>Square</option>
+            <option>Vertical</option>
+            <option>Horizontal</option>
+          </select>
+        </label><br>
+        <button id="step2Next" class="button">Next</button>
+      </div>
+      <div id="step3" class="step hidden">
+        <h3>Preview Ad</h3>
+        <div class="tile card preview-ad">
+          <h4 id="previewHeadline"></h4>
+          <p id="previewBody"></p>
+        </div>
+        <button id="launchBtn" class="button">Launch Campaign</button>
+      </div>
+    </div>
+    <button id="brandNextBtn" class="button">Next</button>
+  </div>
+  <div id="brandSummary" class="hidden container-medium"></div>
+</div>
+<div id="finalSection" class="hidden container-medium">
+  <h2>Your Dashboard</h2>
+  <div id="wrapBrands" class="brand-tiles"></div>
+  <div id="summaryArea">
+    <p>Total ASK earned: <span id="totalAsk">0</span></p>
+    <p id="recentActivity"></p>
+  </div>
+  <div id="wrapMessages">
+    <p class="overlay-text">It’s not ads.</p>
+    <p class="overlay-text">It’s not spam.</p>
+    <p class="overlay-text">It’s your life — supported.</p>
+  </div>
+  <p>Come for the rewards. Stay for the brands that get you.</p>
+  <p id="branding"><strong>Permission x Google – Zero-party data. Trusted by users. Powered by AI.</strong></p>
+  <button id="restartBtn" class="button">Replay Demo</button>
+</div>
+<button id="mainNext" class="button">Next</button>
+<script>
+function q(id){return document.getElementById(id);}
+
+const scenes=[
+  {id:'introSection',title:'Intro'},
+  {id:'userSection',title:'Scene 1 - User Onboarding'},
+  {id:'brandSection',title:'Scene 2 - Brand Portal'},
+  {id:'finalSection',title:'Scene 3 - Wrap Up'}
+];
+let sceneIndex=0;
+
+function showScene(i){
+  scenes.forEach((s,idx)=>{
+    const el=q(s.id);
+    if(el) el.classList.toggle('hidden',idx!==i);
+  });
+  sceneIndex=i;
+  q('sceneTitle').textContent=scenes[i].title;
+}
+
+q('mainNext').onclick=()=>{
+  if(sceneIndex<scenes.length-1){
+    showScene(sceneIndex+1);
+  }else{
+    showScene(0);
+  }
+};
+
+// ----- User Onboarding -----
+const featuredBrand='Diaper Brand #1';
+const userConv=[
+  {ai:`Hey, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,user:"Not yet — just found out I'm expecting our first."},
+  {ai:"Omg, congrats! Anything you're nervous about?",user:"Everything. Budget's tight."},
+  {ai:"You can verify your income to unlock personalized offers. Want to try?",user:null}
+];
+let uPair=0; let expecting='ai';
+
+function appendChat(msg,cls){
+  const p=document.createElement('p');
+  p.textContent=msg;
+  if(cls) p.className=cls;
+  q('chatLog').appendChild(p);
+  q('chatLog').scrollTop=q('chatLog').scrollHeight;
+}
+
+function userNext(){
+  if(uPair>=userConv.length) return;
+  const curr=userConv[uPair];
+  if(expecting==='ai'){
+    appendChat(curr.ai,'ai');
+    expecting='user';
+  }else{
+    if(curr.user){appendChat(curr.user,'user');expecting='ai';uPair++;}
+    else{q('incomeModal').classList.remove('hidden');}
+  }
+  if(uPair===userConv.length && expecting==='ai'){
+    q('sceneNextBtn').classList.remove('hidden');
+  }
+}
+
+q('optInBtn').onclick=()=>{
+  q('landing').classList.add('hidden');
+  q('chat').classList.remove('hidden');
+  q('featuredBrand').textContent=featuredBrand;
+  userNext();
+};
+
+q('nextBtn').onclick=userNext;
+q('verifyCompleteBtn').onclick=()=>{
+  q('incomeModal').classList.add('hidden');
+  appendChat('Income verified!','ai');
+  expecting='ai'; uPair++; userNext();
+};
+q('sceneNextBtn').onclick=()=>showScene(2);
+
+// ----- Brand Portal -----
+const brandConv=[
+  {ai:'Welcome back. Who are you hoping to connect with today?',user:'New parents. Ideally household income over 100k. First-time families.'},
+  {ai:'Got it. Want to include your CRM list?',user:null},
+  {ai:'Want to reach families already on Permission too?',user:'Yes — let\'s offer 800 ASK + $5 off.'}
+];
+let bPair=0; let bExpect='ai';
+function appendBrand(msg,cls){
+  const p=document.createElement('p');
+  p.textContent=msg;
+  if(cls) p.className=cls;
+  q('brandLog').appendChild(p);
+  q('brandLog').scrollTop=q('brandLog').scrollHeight;
+}
+function brandNext(){
+  if(bPair>=brandConv.length) return;
+  const c=brandConv[bPair];
+  if(bExpect==='ai'){
+    appendBrand(c.ai,'ai');
+    bExpect='user';
+  }else{
+    if(c.user){appendBrand(c.user,'user'); bPair++; bExpect='ai';}
+    else{showWizardButton();}
+  }
+  if(bPair===brandConv.length && bExpect==='ai'){
+    q('brandSummary').textContent='Campaign live!';
+    q('brandNextBtn').classList.add('hidden');
+    setTimeout(()=>showScene(3),600);
+  }
+}
+q('brandNextBtn').onclick=brandNext;
+function showWizardButton(){
+  const btn=document.createElement('button');
+  btn.className='button';
+  btn.textContent='Open Builder';
+  btn.onclick=()=>{btn.remove();q('wizard').classList.remove('hidden');};
+  q('brandLog').appendChild(btn);
+}
+
+q('restartBtn').onclick=()=>showScene(0);
+
+window.onload=()=>{
+  showScene(0);
+};
+</script>
+</body>
+</html>
