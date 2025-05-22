@@ -16,6 +16,10 @@ const openChatBtn = q('openChatBtn');
 const incomeModal = q('incomeModal');
 const verifyCompleteBtn = q('verifyCompleteBtn');
 const sceneNextBtn = q('sceneNextBtn');
+let actionBtn = null;
+
+function hideNext(){ nextBtn.classList.add('hidden'); }
+function showNext(){ nextBtn.classList.remove('hidden'); }
 
 const featuredBrand = 'Diaper Brand #1';
 
@@ -73,10 +77,13 @@ function startChat(){
   showChat();
   pair = 0;
   expecting = 'user';
+  showNext();
   append(conversation[0].ai, 'ai');
 }
 
 function showVerify(){
+  hideNext();
+  if(actionBtn) actionBtn.remove();
   const btn = document.createElement('button');
   btn.className = 'button';
   btn.textContent = 'Verify Now';
@@ -84,10 +91,14 @@ function showVerify(){
     incomeModal.classList.remove('hidden');
   };
   chatLog.appendChild(btn);
+  actionBtn = btn;
 }
 
 function handleNext(){
-  if(pair >= conversation.length) return;
+  if(pair >= conversation.length){
+    hideNext();
+    return;
+  }
   const curr = conversation[pair];
   if(expecting === 'user'){
     if(curr.user){
@@ -112,6 +123,11 @@ verifyCompleteBtn.onclick = () => {
   badge.textContent = 'ASK';
   chatLog.appendChild(badge);
   chatLog.appendChild(document.createElement('br'));
+  if(actionBtn){
+    actionBtn.remove();
+    actionBtn = null;
+  }
+  hideNext();
   sceneNextBtn.classList.remove('hidden');
 };
 
