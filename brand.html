@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Project Hell Yeah - Brand Portal</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
   <link rel="stylesheet" href="https://cdn.prod.website-files.com/67c771c6f7894b7707a8c19d/css/permission-io.shared.c64c7fab2.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -13,16 +14,17 @@
       <span>Chat</span>
       <button id="minBrandChatBtn">&#8211;</button>
     </div>
-    <div id="brandLog" class="chat-box"></div>
+    <div id="brandLog" class="chat-box" role="log" aria-live="polite"></div>
     <div id="wizard" class="hidden container-medium">
       <div id="step1" class="step">
         <h2>Define Audience</h2>
+        <label for="audienceInput">Audience description</label>
         <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
         <button id="step1Next" class="button">Next</button>
       </div>
       <div id="step2" class="step hidden">
         <h2>Generate Creative & Copy</h2>
-        <div class="placeholder-img">Image</div>
+        <img id="creativeImg" class="placeholder-img" src="https://via.placeholder.com/300x150" alt="Ad creative preview">
         <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
         <p><strong>Body:</strong> <span id="adCopy"></span></p>
         <label>Format:

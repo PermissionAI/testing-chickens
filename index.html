@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Project Hell Yeah - User</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
   <link rel="stylesheet" href="https://cdn.prod.website-files.com/67c771c6f7894b7707a8c19d/css/permission-io.shared.c64c7fab2.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -22,11 +23,11 @@
       <span>Chat</span>
       <button id="minChatBtn">&#8211;</button>
     </div>
-    <div id="chatLog" class="chat-box"></div>
+    <div id="chatLog" class="chat-box" role="log" aria-live="polite"></div>
     <button id="nextBtn" class="button">Next</button>
   </div>
 
-  <div id="incomeModal" class="modal-overlay hidden">
+  <div id="incomeModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
     <div class="modal-content">
       <h2>Income Verification</h2>
       <p>This is a placeholder for a secure third-party verification flow.</p>
