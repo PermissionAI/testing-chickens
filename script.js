@@ -11,10 +11,13 @@ const dashboard = q('dashboard');
 const optInBtn = q('optInBtn');
 const featuredBrandEl = q('featuredBrand');
 const nextBtn = q('nextBtn');
+const minChatBtn = q('minChatBtn');
+const openChatBtn = q('openChatBtn');
 
 const featuredBrand = 'Diaper Brand #1';
 
 let pair = 0;
+let expecting = 'user';
 const conversation = [
   {
     ai: `Hey, thanks for opting in to ${featuredBrand}! Have you ever bought from them before?`,
@@ -56,10 +59,16 @@ function displaySequence(msgs, done){
   next();
 }
 
-function startChat(){
+function showChat(){
   landing.classList.add('hidden');
   chatDiv.classList.remove('hidden');
+  if(openChatBtn) openChatBtn.classList.add('hidden');
+}
+
+function startChat(){
+  showChat();
   pair = 0;
+  expecting = 'user';
   append(conversation[0].ai, 'ai');
 }
 
@@ -74,20 +83,20 @@ function showVerify(){
 }
 
 function handleNext(){
+  if(pair >= conversation.length) return;
   const curr = conversation[pair];
-  if(curr.user){
-    append(curr.user, 'user');
-    pair++;
-    if(pair < conversation.length){
-      append(conversation[pair].ai, 'ai');
+  if(expecting === 'user'){
+    if(curr.user){
+      append(curr.user, 'user');
+      pair++;
+      expecting = 'ai';
+    } else {
+      showVerify();
+      pair++;
     }
   } else {
-    showVerify();
-    pair++;
-    return;
-  }
-  if(pair === conversation.length - 1 && conversation[pair].user === null){
-    // Next click will show verify
+    append(curr.ai, 'ai');
+    expecting = 'user';
   }
 }
 
@@ -163,7 +172,7 @@ function autoDemo(){
   optInBtn.click();
   function sendNext(){
     if(pair < conversation.length){
-      handleNext();
+      nextBtn.click();
       setTimeout(sendNext, 500);
     } else {
       const btn = chatLog.querySelector('button');
@@ -195,12 +204,23 @@ optInBtn.onclick = () => {
 
 nextBtn.onclick = handleNext;
 
+if(minChatBtn){
+  minChatBtn.onclick = () => {
+    chatDiv.classList.add('hidden');
+    if(openChatBtn) openChatBtn.classList.remove('hidden');
+  };
+}
+
+if(openChatBtn){
+  openChatBtn.onclick = showChat;
+}
+
 window.onload = function(){
   if(featuredBrandEl) featuredBrandEl.textContent = featuredBrand;
   updateDashboard();
   setInterval(checkOffers, 3000);
   if(scene === 'final' && demo){
-    startChat();
+    showChat();
   }
   if(demo && scene !== 'final'){
     setTimeout(guidedDemo, 500);

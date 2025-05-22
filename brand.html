@@ -8,11 +8,16 @@
 </head>
 <body class="container-medium text-align-center">
   <h1>Permission Brand Portal</h1>
-  <div id="brandChat" class="container-medium">
-    <div id="brandLog"></div>
+  <div id="brandChat" class="chat-box">
+    <div class="chat-header">
+      <span>Chat</span>
+      <button id="minBrandChatBtn">&#8211;</button>
+    </div>
+    <div id="brandLog" class="chat-box"></div>
     <input type="text" id="brandInput" placeholder="Type here...">
     <button id="brandSend" class="button">Send</button>
   </div>
+  <button id="openBrandChatBtn" class="button chat-open hidden">Chat</button>
   <div id="wizard" class="hidden container-medium">
     <div id="step1" class="step">
       <h2>Define Audience</h2>
@@ -21,13 +26,21 @@
     </div>
     <div id="step2" class="step hidden">
       <h2>Generate Creative & Copy</h2>
+      <div class="placeholder-img">Image</div>
       <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
       <p><strong>Body:</strong> <span id="adCopy"></span></p>
+      <label>Format:
+        <select id="formatSelect">
+          <option>Square</option>
+          <option>Vertical</option>
+          <option>Horizontal</option>
+        </select>
+      </label><br>
       <button id="step2Next" class="button">Next</button>
     </div>
     <div id="step3" class="step hidden">
       <h2>Preview Ad</h2>
-      <div class="tile card">
+      <div class="tile card preview-ad">
         <h3 id="previewHeadline"></h3>
         <p id="previewBody"></p>
       </div>
@@ -52,6 +65,8 @@
   const previewHeadline = document.getElementById('previewHeadline');
   const previewBody = document.getElementById('previewBody');
   const summary = document.getElementById('summary');
+  const minBrandChatBtn = document.getElementById('minBrandChatBtn');
+  const openBrandChatBtn = document.getElementById('openBrandChatBtn');
 
   const brandNames = ['Bambino Diapers','Happy Tush','SnugBug','EcoBaby','SoftCare'];
   const brand = brandNames[Math.floor(Math.random()*brandNames.length)];
@@ -145,6 +160,20 @@
     };
     summary.appendChild(go);
     summary.classList.remove('hidden');
+  }
+
+  if(minBrandChatBtn){
+    minBrandChatBtn.onclick = () => {
+      document.getElementById('brandChat').classList.add('hidden');
+      if(openBrandChatBtn) openBrandChatBtn.classList.remove('hidden');
+    };
+  }
+
+  if(openBrandChatBtn){
+    openBrandChatBtn.onclick = () => {
+      document.getElementById('brandChat').classList.remove('hidden');
+      openBrandChatBtn.classList.add('hidden');
+    };
   }
 
   function guidedDemo(){

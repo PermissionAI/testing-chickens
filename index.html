@@ -17,8 +17,12 @@
       </div>
   </div>
 
-  <div id="chat" class="hidden chat-overlay">
-    <div id="chatLog"></div>
+  <div id="chat" class="hidden chat-box">
+    <div class="chat-header">
+      <span>Chat</span>
+      <button id="minChatBtn">&#8211;</button>
+    </div>
+    <div id="chatLog" class="chat-box"></div>
     <button id="nextBtn" class="button">Next</button>
   </div>
 
@@ -38,7 +42,7 @@
     <div id="offers"></div>
   </div>
 
-  <button id="nextBtn" class="button hidden">Next</button>
+  <button id="openChatBtn" class="button chat-open hidden">Chat</button>
 
   <script src="script.js"></script>
 </body>
