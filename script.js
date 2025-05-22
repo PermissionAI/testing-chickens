@@ -141,13 +141,14 @@ function checkOffers(){
     const msgs = [
       'Hey, just got some good news —',
       'Diaper Brand 2 launched a new offer made for new parents like you.',
-      'Includes ' + o.reward + '. Want to check it out?'
+      "You've unlocked a special bonus from them — " + o.reward +
+      ' — because you seem like a perfect match. Want to join?'
     ];
     sessionStorage.setItem('notified', '1');
     displaySequence(msgs, () => {
       const btn = document.createElement('button');
       btn.className = 'button';
-      btn.textContent = 'Yes, please';
+      btn.textContent = 'Join Offer';
       btn.onclick = () => {
         const brands = JSON.parse(localStorage.getItem('optedInBrands') || '[]');
         if(!brands.includes(o.brand)) brands.push(o.brand);
