@@ -23,7 +23,7 @@ test('user page flow progresses to verification', () => {
     setTimeout: (fn) => fn(),
     console
   });
-  runScript('script.js', context);
+  runScript('archive/script.js', context);
 
   document.getElementById('optInBtn').onclick();
   const nextBtn = document.getElementById('nextBtn');
@@ -48,7 +48,7 @@ test('brand portal flow reaches go live', () => {
     setTimeout: (fn) => fn(),
     console
   });
-  const html = fs.readFileSync('brand.html','utf8');
+  const html = fs.readFileSync('archive/brand.html','utf8');
   const match = /<script>([\s\S]*?)<\/script>/m.exec(html);
   vm.runInContext(match[1], context);
   if (window.onload) window.onload();
@@ -83,7 +83,7 @@ test('shell scene progression', () => {
     setTimeout: (fn) => fn(),
     console
   });
-  runScript('shell.js', context);
+  runScript('archive/shell.js', context);
 
   const nextBtn = document.getElementById('nextBtn');
   for (let i = 0; i < 4; i++) nextBtn.click();
@@ -104,7 +104,7 @@ test('only one chat button active at a time', () => {
     setTimeout: (fn) => fn(),
     console
   });
-  runScript('script.js', context);
+  runScript('archive/script.js', context);
 
   document.getElementById('optInBtn').onclick();
   const nextBtn = document.getElementById('nextBtn');
