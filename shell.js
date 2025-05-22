@@ -1,10 +1,7 @@
 function q(id){return document.getElementById(id);}
 
 const scenes = [
-  {name: 'Intro', lines: [
-    'Welcome to the demo presentation.',
-    'Use the Next button to progress through each scene.'
-  ]},
+  {name: 'Intro', lines: []},
   {name: 'Scene 1 - User Onboarding', page: 'index.html?demo=1'},
   {name: 'Scene 2 - Brand Portal', page: 'brand.html?demo=1'},
   {name: 'Scene 3 - Offer Delivered', page: 'index.html?scene=final&demo=1'},
@@ -23,6 +20,8 @@ const wrapScene = q('wrapUpScene');
 const wrapBrands = q('wrapBrands');
 const totalAskEl = q('totalAsk');
 const recentActivityEl = q('recentActivity');
+const introScreen = q('introScreen');
+let currentEl = null;
 
 function append(text){
   const p = document.createElement('p');
@@ -57,33 +56,47 @@ function updateWrapUp(){
   }
 }
 
+function fadeSwap(outEl, inEl){
+  if(outEl){
+    outEl.classList.add('fade');
+    outEl.classList.add('fade-hidden');
+    setTimeout(() => outEl.classList.add('hidden'), 500);
+  }
+  if(inEl){
+    inEl.classList.add('fade');
+    inEl.classList.remove('hidden');
+    inEl.classList.add('fade-hidden');
+    setTimeout(() => inEl.classList.remove('fade-hidden'), 50);
+  }
+}
+
 function showScene(){
   const scene = scenes[sceneIndex];
   sceneName.textContent = scene.name;
   lineIndex = 0;
-  if(sceneIndex === scenes.length - 1){
-    // Final wrap-up scene
-    frame.classList.add('hidden');
-    sceneLog.classList.add('hidden');
-    wrapScene.classList.remove('hidden');
+  let target;
+  if(sceneIndex === 0){
+    target = introScreen;
+    nextBtn.textContent = 'Next';
+    nextBtn.onclick = next;
+  } else if(sceneIndex === scenes.length - 1){
+    target = wrapScene;
     nextBtn.textContent = 'Replay Demo';
     nextBtn.onclick = () => window.location.reload();
     updateWrapUp();
   } else if(scene.page){
     frame.src = scene.page;
-    frame.classList.remove('hidden');
-    sceneLog.classList.add('hidden');
-    wrapScene.classList.add('hidden');
+    target = frame;
     nextBtn.textContent = 'Next';
     nextBtn.onclick = next;
   } else {
-    frame.classList.add('hidden');
-    wrapScene.classList.add('hidden');
-    sceneLog.classList.remove('hidden');
     sceneLog.innerHTML = '';
+    target = sceneLog;
     nextBtn.textContent = 'Next';
     nextBtn.onclick = next;
   }
+  fadeSwap(currentEl, target);
+  currentEl = target;
 }
 
 function next(){
@@ -114,5 +127,4 @@ nextBtn.addEventListener('click', next);
 
 window.onload = function(){
   showScene();
-  next();
 };
