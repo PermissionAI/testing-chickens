@@ -122,6 +122,11 @@ input[type="file"]:focus-visible {
   padding: 12px 24px;
 }
 
+/* larger CTAs used inside modals */
+.modal-cta {
+  padding: 20px 40px;
+}
+
 .button:hover {
   background: #115E59;
 }
@@ -208,7 +213,7 @@ input[type="file"]:focus-visible {
 .modal-content {
   background: #FFFFFF;
   border-radius: 16px;
-  padding: 24px;
+  padding: 32px;
 }
 
 .footer-links {
@@ -416,7 +421,7 @@ input[type="file"]:focus-visible {
     <div class="modal-content">
       <h2>Income Verification</h2>
       <p>This is a placeholder for a secure third-party verification flow.</p>
-      <button id="verifyCompleteBtn" class="button">Complete Verification</button>
+      <button id="verifyCompleteBtn" class="button modal-cta">Complete Verification</button>
     </div>
   </div>
   <button id="sceneNextBtn" class="button scene-next hidden">Next</button>
@@ -440,7 +445,7 @@ input[type="file"]:focus-visible {
           <h3>Audience & Offer</h3>
           <label for="audienceInput">Audience description</label>
           <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
-          <button id="step1Next" class="button">Next</button>
+          <button id="step1Next" class="button modal-cta">Next</button>
         </div>
         <div id="step2" class="step hidden">
           <h3>Creative Setup</h3>
@@ -454,7 +459,7 @@ input[type="file"]:focus-visible {
               <option>Horizontal</option>
             </select>
           </label><br>
-          <button id="step2Next" class="button">Next</button>
+          <button id="step2Next" class="button modal-cta">Next</button>
         </div>
         <div id="step3" class="step hidden">
           <h3>Preview & Launch</h3>
@@ -462,7 +467,7 @@ input[type="file"]:focus-visible {
             <h4 id="previewHeadline"></h4>
             <p id="previewBody"></p>
           </div>
-          <button id="launchBtn" class="button">Launch Campaign</button>
+          <button id="launchBtn" class="button modal-cta">Launch Campaign</button>
         </div>
       </div>
     </div>
