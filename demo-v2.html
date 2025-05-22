@@ -379,14 +379,14 @@ input[type="file"]:focus-visible {
     <div class="modal-content">
       <div id="wizard" class="container-medium">
         <div id="step1" class="step">
-          <h3>Define Audience</h3>
+          <h3>Audience & Offer</h3>
           <label for="audienceInput">Audience description</label>
           <textarea id="audienceInput" rows="3">New parents. Ideally household income over 100k. First-time families.</textarea><br>
           <button id="step1Next" class="button">Next</button>
         </div>
         <div id="step2" class="step hidden">
-          <h3>Generate Creative & Copy</h3>
-          <img id="creativeImg" class="placeholder-img" src="https://via.placeholder.com/300x150" alt="Ad creative preview">
+          <h3>Creative Setup</h3>
+          <img id="creativeImg" class="placeholder-img" src="https://placehold.co/300x150?text=Ad+Preview" alt="Ad creative preview">
           <p><strong>Headline:</strong> <span id="adHeadline"></span></p>
           <p><strong>Body:</strong> <span id="adCopy"></span></p>
           <label>Format:
@@ -399,7 +399,7 @@ input[type="file"]:focus-visible {
           <button id="step2Next" class="button">Next</button>
         </div>
         <div id="step3" class="step hidden">
-          <h3>Preview Ad</h3>
+          <h3>Preview & Launch</h3>
           <div class="tile card preview-ad">
             <h4 id="previewHeadline"></h4>
             <p id="previewBody"></p>
@@ -408,12 +408,10 @@ input[type="file"]:focus-visible {
         </div>
       </div>
     </div>
-  </div>
-  <div id="brandSummaryModal" class="modal-overlay hidden" role="dialog" aria-modal="true">
-    <div id="brandSummary" class="modal-content container-medium"></div>
-  </div>
+  </div>  </div>
 </div>
 <div id="offerSection" class="hidden">
+  <h2>Permission Marketplace</h2>
   <div id="offerChat" class="chat-box">
     <div class="chat-header">
       <span>Chat</span>
@@ -431,6 +429,8 @@ input[type="file"]:focus-visible {
     <p>Total ASK earned: <span id="totalAsk">0</span></p>
     <p id="recentActivity"></p>
   </div>
+  <h3>Earn History</h3>
+  <ul id="earnEvents"></ul>
   <div id="wrapMessages">
     <p class="overlay-text">It’s not ads.</p>
     <p class="overlay-text">It’s not spam.</p>
@@ -472,6 +472,8 @@ function updateWrapUp(){
   const offers=JSON.parse(localStorage.getItem('offers')||'[]');
   let total=0;offers.forEach(o=>{total+=parseAsk(o.reward);});
   q('totalAsk').textContent=total;
+  q('earnEvents').innerHTML='';
+  offers.forEach(o=>{const li=document.createElement('li');li.textContent=`${o.brand}: ${o.reward}`;q('earnEvents').appendChild(li);});
   if(offers.length){
     const last=offers[offers.length-1];
     q('recentActivity').textContent=last.brand+': '+last.reward;
@@ -698,29 +700,32 @@ q('launchBtn').onclick = () => {
 };
 
 function showOfferSummary(txt){
-  const summary = q('brandSummary');
-  summary.innerHTML = '<p>' + txt + '</p>';
-  const rewardMatch = /(\d+\s*ASK\s*\+\s*\$\d+\s*off)/i.exec(txt);
-  const reward = rewardMatch ? rewardMatch[1] : txt;
-  const go = document.createElement('button');
-  go.className = 'button';
-  go.textContent = 'Go Live';
-  go.onclick = () => {
-    const offers = JSON.parse(localStorage.getItem('offers') || '[]');
-    offers.push({brand: brand, reward: reward});
-    localStorage.setItem('offers', JSON.stringify(offers));
-    summary.innerHTML = '<p>Campaign live!</p>';
-    const nextBtn = document.createElement('button');
-    nextBtn.className = 'button scene-next';
-    nextBtn.textContent = 'Next';
-    nextBtn.onclick = () => {
-      q('brandSummaryModal').classList.add('hidden');
-      showScene(3);
-    };
-    summary.appendChild(nextBtn);
+  const summaryMsg=document.createElement('p');
+  summaryMsg.className='ai';
+  summaryMsg.textContent=txt;
+  q('brandLog').appendChild(summaryMsg);
+  const rewardMatch=/(\d+\s*ASK\s*\+\s*\$\d+\s*off)/i.exec(txt);
+  const reward=rewardMatch?rewardMatch[1]:txt;
+  const go=document.createElement('button');
+  go.className='button';
+  go.textContent='Go Live';
+  go.onclick=()=>{
+    const offers=JSON.parse(localStorage.getItem('offers')||'[]');
+    offers.push({brand:brand,reward:reward});
+    localStorage.setItem('offers',JSON.stringify(offers));
+    const done=document.createElement('p');
+    done.className='ai';
+    done.textContent='Campaign live!';
+    q('brandLog').appendChild(done);
+    const nextBtn=document.createElement('button');
+    nextBtn.className='button scene-next';
+    nextBtn.textContent='Next';
+    nextBtn.onclick=()=>{showScene(3);};
+    q('brandLog').appendChild(nextBtn);
+    q('brandLog').scrollTop=q('brandLog').scrollHeight;
   };
-  summary.appendChild(go);
-  q('brandSummaryModal').classList.remove('hidden');
+  q('brandLog').appendChild(go);
+  q('brandLog').scrollTop=q('brandLog').scrollHeight;
 }
 
 q('brandNextBtn').onclick = handleBrandNext;
@@ -748,28 +753,35 @@ const offerMsgs = [
 ];
 
 function hideOfferNext(){ q('offerNextBtn').classList.add('hidden'); }
+function showOfferNext(){ q('offerNextBtn').classList.remove('hidden'); }
 
-function appendOffer(msg){
-  const p = document.createElement('p');
-  p.className = 'ai';
-  p.textContent = msg;
-  p.onclick = () => { p.onclick = null; offerIdx++; if(offerIdx < offerMsgs.length){ appendOffer(offerMsgs[offerIdx]); } else { showJoinOffer(); } };
-  q('offerLog').appendChild(p);
-  q('offerLog').scrollTop = q('offerLog').scrollHeight;
+function offerNext(){
+  if(offerIdx < offerMsgs.length){
+    const p=document.createElement('p');
+    p.className='ai';
+    p.textContent=offerMsgs[offerIdx];
+    q('offerLog').appendChild(p);
+    q('offerLog').scrollTop=q('offerLog').scrollHeight;
+    offerIdx++;
+    if(offerIdx===offerMsgs.length){
+      hideOfferNext();
+      showJoinOffer();
+    }
+  }
 }
 
 function displayOfferSequence(arr, done){
-  let i = 0;
+  let i=0;
   function next(){
-    if(i < arr.length){
-      const el = document.createElement('p');
-      el.className = 'ai';
-      el.textContent = arr[i];
+    if(i<arr.length){
+      const el=document.createElement('p');
+      el.className='ai';
+      el.textContent=arr[i];
       q('offerLog').appendChild(el);
-      q('offerLog').scrollTop = q('offerLog').scrollHeight;
+      q('offerLog').scrollTop=q('offerLog').scrollHeight;
       i++;
-      el.onclick = () => { el.onclick = null; next(); };
-    } else if(done){
+      next();
+    }else if(done){
       done();
     }
   }
@@ -785,7 +797,7 @@ function showJoinOffer(){
     displayOfferSequence([
       "Nice. You're all set.",
       "Oh btw \u2014 have you looked into baby food subscriptions yet? Happy to help you find one if you're interested."
-    ], () => { q('offerNextBtn').classList.remove('hidden'); });
+    ], () => { showOfferNext(); });
   };
   q('offerLog').appendChild(btn);
 }
@@ -796,10 +808,17 @@ function startOffer(){
   offerIdx = 0;
   q('offerChat').classList.remove('hidden');
   if(q('offerOpenChat')) q('offerOpenChat').classList.add('hidden');
-  appendOffer(offerMsgs[0]);
+  offerNext();
+  showOfferNext();
 }
 
-q('offerNextBtn').onclick = () => showScene(4);
+q('offerNextBtn').onclick = () => {
+  if(offerIdx < offerMsgs.length){
+    offerNext();
+  } else {
+    showScene(4);
+  }
+};
 
 if(q('offerMinChat')){
   q('offerMinChat').onclick = () => {
@@ -818,6 +837,15 @@ if(q('offerOpenChat')){
 q('restartBtn').onclick=()=>showScene(0);
 
 window.onload=()=>{
+  if(!localStorage.getItem('offers')){
+    localStorage.setItem('offers', JSON.stringify([
+      {brand:'EcoBaby', reward:'500 ASK + $5 off'},
+      {brand:'Happy Tush', reward:'250 ASK + 10% off'}
+    ]));
+  }
+  if(!localStorage.getItem('optedInBrands')){
+    localStorage.setItem('optedInBrands', JSON.stringify(['EcoBaby','Happy Tush']));
+  }
   showScene(0);
 };
 </script>

@@ -257,7 +257,7 @@ input[type="file"]:focus-visible {
 }
 
 
-.step { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
+.step { border: 1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.05); }
 
 .placeholder-img {
   width: 100%;
@@ -313,4 +313,8 @@ input[type="file"]:focus-visible {
 .fade-hidden {
   opacity: 0;
 }
+
+
+# Earn events list
+#earnEvents { list-style: disc; margin: 10px 0 20px 20px; }
 
