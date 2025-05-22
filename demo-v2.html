@@ -443,18 +443,28 @@ function appendChat(msg,cls){
   q('chatLog').scrollTop=q('chatLog').scrollHeight;
 }
 
+function showVerify(){
+  const btn=document.createElement('button');
+  btn.className='button';
+  btn.textContent='Verify Now';
+  btn.onclick=()=>{q('incomeModal').classList.remove('hidden');};
+  q('chatLog').appendChild(btn);
+}
+
 function userNext(){
   if(uPair>=userConv.length) return;
   const curr=userConv[uPair];
-  if(expecting==='ai'){
+  if(expecting==='user'){
+    if(curr.user){
+      appendChat(curr.user,'user');
+      uPair++; expecting='ai';
+    }else{
+      showVerify();
+      uPair++; // wait for verify button
+    }
+  }else{
     appendChat(curr.ai,'ai');
     expecting='user';
-  }else{
-    if(curr.user){appendChat(curr.user,'user');expecting='ai';uPair++;}
-    else{q('incomeModal').classList.remove('hidden');}
-  }
-  if(uPair===userConv.length && expecting==='ai'){
-    q('sceneNextBtn').classList.remove('hidden');
   }
 }
 
@@ -469,7 +479,7 @@ q('nextBtn').onclick=userNext;
 q('verifyCompleteBtn').onclick=()=>{
   q('incomeModal').classList.add('hidden');
   appendChat('Income verified!','ai');
-  expecting='ai'; uPair++; userNext();
+  q('sceneNextBtn').classList.remove('hidden');
 };
 q('sceneNextBtn').onclick=()=>showScene(2);
 
