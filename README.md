@@ -20,3 +20,9 @@ same browser tab will let the pages share data.
 ## Presenter Shell
 
 For a simple click-through presentation of the demo scenes, open `shell.html`. The shell loads each stage of the demo inside an embedded frame so you can step through the entire experience without leaving the page. Use the **Next** button to advance from the Intro through each scene until the end.
+
+## Single-file Demo
+
+If you'd rather run the entire experience from a single page, open `demo-v2.html`.
+This consolidated version contains all scenes and scripts inline so you can step
+through the flow without navigating between pages.
