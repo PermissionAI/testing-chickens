@@ -98,6 +98,19 @@
     wizard.classList.remove('hidden');
   }
 
+  function showWizardButton(){
+    const btn = document.createElement('button');
+    btn.className = 'button';
+    btn.textContent = 'Open Builder';
+    btn.onclick = () => {
+      btn.remove();
+      showWizard();
+      pair++;
+      expecting = 'ai';
+    };
+    log.appendChild(btn);
+  }
+
   function handleNext(){
     if(pair >= conversation.length) return;
     const curr = conversation[pair];
@@ -110,13 +123,14 @@
         }
         expecting = 'ai';
       } else {
-        showWizard();
-        pair++;
-        expecting = 'ai';
+        // waiting for wizard button
       }
     } else {
       append(curr.ai, 'ai');
       expecting = 'user';
+      if(pair === 1){
+        showWizardButton();
+      }
     }
   }
 
